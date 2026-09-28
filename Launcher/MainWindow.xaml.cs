@@ -349,6 +349,7 @@ namespace DynamicIslandLauncher
 
         private void AutoStart_Changed(object sender, RoutedEventArgs e)
         {
+            if (_settingsService == null || SettingsAutoStartCheck == null) return;
             bool enable = SettingsAutoStartCheck.IsChecked == true;
             _settingsService.Current.AutoStart = enable;
             _settingsService.Save(_settingsService.Current);
