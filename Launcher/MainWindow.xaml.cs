@@ -18,22 +18,42 @@ namespace DynamicIslandLauncher
 
         public MainWindow()
         {
-            _settingsService = new SettingsService(Dispatcher);
-            InitializeComponent();
-            Loaded += MainWindow_Loaded;
+            try { File.AppendAllText("launcher.log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] MainWindow ctor start\n"); } catch { }
+            try
+            {
+                _settingsService = new SettingsService(Dispatcher);
+                InitializeComponent();
+                Loaded += MainWindow_Loaded;
+                Closing += (s, e) => { try { File.AppendAllText("launcher.log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] MainWindow Closing (Cancel={e.Cancel})\n"); } catch { } };
+                Closed += (s, e) => { try { File.AppendAllText("launcher.log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] MainWindow Closed\n"); } catch { } };
+            }
+            catch (Exception ex)
+            {
+                try { File.AppendAllText("launcher.log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] MainWindow ctor EXCEPTION: {ex}\n"); } catch { }
+                throw;
+            }
+            try { File.AppendAllText("launcher.log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] MainWindow ctor end\n"); } catch { }
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            AcrylicHelper.EnableBlur(this);
-            LoadCurrentSettingsToUI();
-
-            // Check if already installed
-            string targetExe = Path.Combine(SettingsService.InstallDirectory, "DynamicIsland.exe");
-            if (File.Exists(targetExe))
+            try
             {
-                // If already installed, let the user know by jumping to settings or keeping welcome
-                StepLabel2.Text = "2. Оновлення";
+                File.AppendAllText("launcher.log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] MainWindow_Loaded start\n");
+                try { AcrylicHelper.EnableBlur(this); } catch (Exception ex) { File.AppendAllText("launcher.log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] Blur error: {ex}\n"); }
+                LoadCurrentSettingsToUI();
+
+                // Check if already installed
+                string targetExe = Path.Combine(SettingsService.InstallDirectory, "DynamicIsland.exe");
+                if (File.Exists(targetExe))
+                {
+                    StepLabel2.Text = "2. Оновлення";
+                }
+                File.AppendAllText("launcher.log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] MainWindow_Loaded end\n");
+            }
+            catch (Exception ex)
+            {
+                File.AppendAllText("launcher.log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] MainWindow_Loaded EXCEPTION: {ex}\n");
             }
         }
 
