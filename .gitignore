@@ -1,0 +1,25 @@
+# Build outputs
+bin/
+obj/
+publish/
+.vs/
+
+# Logs and temp files
+*.log
+*.tmp
+debug.log
+app.log
+output.log
+crop_user.png
+live_island.png
+scratch_*.png
+preview_weights.png
+compare_fonts.png
+call_*.png
+
+# User specific files
+*.user
+*.suo
+
+# Keep bundle zip for remote installation via launcher
+!dynamic-island-bundle.zip

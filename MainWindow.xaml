@@ -1,0 +1,833 @@
+<Window x:Class="DynamicIsland.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Dynamic Island"
+        Width="460" Height="220"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        WindowStartupLocation="Manual"
+        FontFamily="{StaticResource IOSFont}"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType">
+    
+    <Window.Resources>
+        <Style x:Key="IslandButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder" Background="{TemplateBinding Background}" CornerRadius="19" SnapsToDevicePixels="True"
+                                RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="borderScale" ScaleX="1" ScaleY="1"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="#1AFFFFFF"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="borderScale" Storyboard.TargetProperty="ScaleX"
+                                                             To="1.15" Duration="0:0:0.12">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="borderScale" Storyboard.TargetProperty="ScaleY"
+                                                             To="1.15" Duration="0:0:0.12">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="borderScale" Storyboard.TargetProperty="ScaleX"
+                                                             To="1.0" Duration="0:0:0.12">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="borderScale" Storyboard.TargetProperty="ScaleY"
+                                                             To="1.0" Duration="0:0:0.12">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="#2AFFFFFF"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="borderScale" Storyboard.TargetProperty="ScaleX"
+                                                             To="0.90" Duration="0:0:0.06"/>
+                                            <DoubleAnimation Storyboard.TargetName="borderScale" Storyboard.TargetProperty="ScaleY"
+                                                             To="0.90" Duration="0:0:0.06"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="borderScale" Storyboard.TargetProperty="ScaleX"
+                                                             To="1.15" Duration="0:0:0.06"/>
+                                            <DoubleAnimation Storyboard.TargetName="borderScale" Storyboard.TargetProperty="ScaleY"
+                                                             To="1.15" Duration="0:0:0.06"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Dedicated Apple-style Call Action Button -->
+        <Style x:Key="CallActionButtonStyle" TargetType="Button">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="callBtnBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="20"
+                                SnapsToDevicePixels="True"
+                                RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="callBtnScale" ScaleX="1" ScaleY="1"/>
+                            </Border.RenderTransform>
+                            <Grid>
+                                <!-- Apple-style subtle glass inner highlight -->
+                                <Border CornerRadius="20,20,0,0" Height="20" VerticalAlignment="Top" Background="#20FFFFFF"/>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="callBtnScale" Storyboard.TargetProperty="ScaleX"
+                                                             To="1.08" Duration="0:0:0.12">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="callBtnScale" Storyboard.TargetProperty="ScaleY"
+                                                             To="1.08" Duration="0:0:0.12">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="callBtnScale" Storyboard.TargetProperty="ScaleX"
+                                                             To="1.0" Duration="0:0:0.12">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="callBtnScale" Storyboard.TargetProperty="ScaleY"
+                                                             To="1.0" Duration="0:0:0.12">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="callBtnScale" Storyboard.TargetProperty="ScaleX"
+                                                             To="0.92" Duration="0:0:0.06"/>
+                                            <DoubleAnimation Storyboard.TargetName="callBtnScale" Storyboard.TargetProperty="ScaleY"
+                                                             To="0.92" Duration="0:0:0.06"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="callBtnScale" Storyboard.TargetProperty="ScaleX"
+                                                             To="1.08" Duration="0:0:0.06"/>
+                                            <DoubleAnimation Storyboard.TargetName="callBtnScale" Storyboard.TargetProperty="ScaleY"
+                                                             To="1.08" Duration="0:0:0.06"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,8,0,0">
+        <!-- Main Dynamic Island Pill/Card Container -->
+        <Border x:Name="IslandBorder"
+                Width="154" Height="37"
+                CornerRadius="18.5"
+                Background="#000000"
+                BorderBrush="#14FFFFFF"
+                BorderThickness="1"
+                ClipToBounds="True"
+                Cursor="Hand"
+                RenderTransformOrigin="0.5,0"
+                MouseEnter="Island_MouseEnter"
+                MouseLeave="Island_MouseLeave"
+                MouseLeftButtonDown="Island_MouseLeftButtonDown">
+            <Border.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform x:Name="IslandScale" ScaleX="1" ScaleY="1"/>
+                    <TranslateTransform x:Name="IslandTransform" X="0" Y="0"/>
+                </TransformGroup>
+            </Border.RenderTransform>
+            <Border.ContextMenu>
+                <ContextMenu Background="#1C1C1E" Foreground="#FFFFFF" BorderBrush="#33FFFFFF" BorderThickness="1">
+                    <MenuItem Header="📞 Тест: Звонок Telegram" Click="TestTelegramCall_Click" Foreground="#FFFFFF" Background="#1C1C1E"/>
+                    <MenuItem Header="📞 Тест: Звонок Discord" Click="TestDiscordCall_Click" Foreground="#FFFFFF" Background="#1C1C1E"/>
+                    <Separator Background="#33FFFFFF"/>
+                    <MenuItem Header="💬 Тест: Сообщение Telegram" Click="TestTelegramMessage_Click" Foreground="#FFFFFF" Background="#1C1C1E"/>
+                    <MenuItem Header="💬 Тест: Сообщение Discord" Click="TestDiscordMessage_Click" Foreground="#FFFFFF" Background="#1C1C1E"/>
+                    <MenuItem Header="💬 Тест: Сообщение WhatsApp" Click="TestWhatsAppMessage_Click" Foreground="#FFFFFF" Background="#1C1C1E"/>
+                    <MenuItem Header="💬 Тест: Сообщение VK" Click="TestVkMessage_Click" Foreground="#FFFFFF" Background="#1C1C1E"/>
+                    <MenuItem Header="💬 Тест: Уведомление Windows" Click="TestWindowsMessage_Click" Foreground="#FFFFFF" Background="#1C1C1E"/>
+                    <Separator Background="#33FFFFFF"/>
+                    <MenuItem Header="Выход" Click="ExitMenu_Click" Foreground="#FFFFFF" Background="#1C1C1E"/>
+                </ContextMenu>
+            </Border.ContextMenu>
+            <Border.Effect>
+                <DropShadowEffect x:Name="IslandShadow" Color="#000000" BlurRadius="20" ShadowDepth="3" Opacity="0.45"/>
+            </Border.Effect>
+
+            <Grid x:Name="IslandContentGrid">
+                <!-- 1. COMPACT IDLE VIEW (Minimal clock with Apple-green status dot) -->
+                <Grid x:Name="CompactIdleView" Visibility="Visible" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="6,0,6,0">
+
+                        <!-- Time-of-day icon — iOS Weather style -->
+                        <Viewbox Width="16.5" Height="16.5" Margin="0,0,7.5,0" VerticalAlignment="Center" SnapsToDevicePixels="True">
+                            <Grid Width="24" Height="24">
+
+                                <!-- ══ 🌅 СХІД СОНЦЯ 5:00–7:00 ════════════════════════════════ -->
+                                <Grid x:Name="IconSunrise" Visibility="Collapsed">
+                                    <Grid.Resources>
+                                        <LinearGradientBrush x:Key="SunriseGrad" StartPoint="0.5,0" EndPoint="0.5,1">
+                                            <GradientStop Color="#FFE566" Offset="0"/>
+                                            <GradientStop Color="#FF7A1F" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Grid.Resources>
+                                    <!-- Горизонт -->
+                                    <Path Data="M2,16 H22" Stroke="#FF9040" StrokeThickness="1.4"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                    <!-- Напівколо сонця -->
+                                    <Path Data="M5,16 A7,7 0 0,1 19,16 Z"
+                                          Fill="{StaticResource SunriseGrad}"/>
+                                    <!-- Промені над горизонтом -->
+                                    <Path Data="M12,4 V7 M6.3,6.3 L8.4,8.4 M17.7,6.3 L15.6,8.4 M4,12 H6 M20,12 H22"
+                                          Stroke="#FFCC40" StrokeThickness="1.5"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                </Grid>
+
+                                <!-- ══ ☀️ РАНОК 7:00–11:00 ════════════════════════════════════ -->
+                                <Grid x:Name="IconMorningSun" Visibility="Collapsed">
+                                    <Grid.Resources>
+                                        <RadialGradientBrush x:Key="MornGrad" GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                                            <GradientStop Color="#FFF5A0" Offset="0"/>
+                                            <GradientStop Color="#FFD020" Offset="0.7"/>
+                                            <GradientStop Color="#FFAA00" Offset="1"/>
+                                        </RadialGradientBrush>
+                                    </Grid.Resources>
+                                    <!-- Диск -->
+                                    <Ellipse Width="10" Height="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                             Fill="{StaticResource MornGrad}"/>
+                                    <!-- 8 коротких округлих променів -->
+                                    <Path Data="M12,2.5 V5 M12,19 V21.5 M2.5,12 H5 M19,12 H21.5 M5.3,5.3 L7.1,7.1 M16.9,16.9 L18.7,18.7 M18.7,5.3 L16.9,7.1 M7.1,16.9 L5.3,18.7"
+                                          Stroke="#FFC400" StrokeThickness="1.6"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                </Grid>
+
+                                <!-- ══ 🔆 ДЕНЬ 11:00–16:00 ════════════════════════════════════ -->
+                                <Grid x:Name="IconDaySun" Visibility="Collapsed">
+                                    <Grid.Resources>
+                                        <RadialGradientBrush x:Key="DayGrad" GradientOrigin="0.4,0.35" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                                            <GradientStop Color="#FFFFFF" Offset="0"/>
+                                            <GradientStop Color="#FFE940" Offset="0.4"/>
+                                            <GradientStop Color="#FFB800" Offset="1"/>
+                                        </RadialGradientBrush>
+                                    </Grid.Resources>
+                                    <!-- Більший диск -->
+                                    <Ellipse Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                             Fill="{StaticResource DayGrad}"/>
+                                    <!-- 8 довших яскравих променів -->
+                                    <Path Data="M12,2 V4.5 M12,19.5 V22 M2,12 H4.5 M19.5,12 H22 M4.6,4.6 L6.7,6.7 M17.3,17.3 L19.4,19.4 M19.4,4.6 L17.3,6.7 M6.7,17.3 L4.6,19.4"
+                                          Stroke="#FFD000" StrokeThickness="1.8"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                </Grid>
+
+                                <!-- ══ 🌇 ЗАХІД 16:00–19:30 ════════════════════════════════════ -->
+                                <Grid x:Name="IconSunset" Visibility="Collapsed">
+                                    <Grid.Resources>
+                                        <LinearGradientBrush x:Key="SunsetGrad" StartPoint="0.5,0" EndPoint="0.5,1">
+                                            <GradientStop Color="#FFB347" Offset="0"/>
+                                            <GradientStop Color="#FF4500" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Grid.Resources>
+                                    <!-- Горизонт -->
+                                    <Path Data="M2,16 H22" Stroke="#FF6030" StrokeThickness="1.4"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                    <!-- Напівколо сонця -->
+                                    <Path Data="M5,16 A7,7 0 0,1 19,16 Z"
+                                          Fill="{StaticResource SunsetGrad}"/>
+                                    <!-- Промені -->
+                                    <Path Data="M12,4 V7 M6.3,6.3 L8.4,8.4 M17.7,6.3 L15.6,8.4"
+                                          Stroke="#FF8C30" StrokeThickness="1.5"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                    <!-- Лінії відблиску нижче горизонту -->
+                                    <Path Data="M5,19 H8 M10.5,19 H13.5 M16,19 H19"
+                                          Stroke="#FF603080" StrokeThickness="1.2"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                </Grid>
+
+                                <!-- ══ 🌆 СУТІНКИ 19:30–21:30 ═════════════════════════════════ -->
+                                <Grid x:Name="IconDusk" Visibility="Collapsed">
+                                    <Grid.Resources>
+                                        <RadialGradientBrush x:Key="DuskMoonGrad" GradientOrigin="0.35,0.35" Center="0.5,0.5" RadiusX="0.55" RadiusY="0.55">
+                                            <GradientStop Color="#F0CBFF" Offset="0"/>
+                                            <GradientStop Color="#C57BF0" Offset="0.6"/>
+                                            <GradientStop Color="#9B3DD9" Offset="1"/>
+                                        </RadialGradientBrush>
+                                    </Grid.Resources>
+                                    <!-- Місяць-серп: велике коло мінус мале зміщене -->
+                                    <Path Fill="{StaticResource DuskMoonGrad}">
+                                        <Path.Data>
+                                            <CombinedGeometry GeometryCombineMode="Exclude">
+                                                <CombinedGeometry.Geometry1>
+                                                    <EllipseGeometry Center="11,12" RadiusX="7.5" RadiusY="7.5"/>
+                                                </CombinedGeometry.Geometry1>
+                                                <CombinedGeometry.Geometry2>
+                                                    <EllipseGeometry Center="14.5,9" RadiusX="6.5" RadiusY="6.5"/>
+                                                </CombinedGeometry.Geometry2>
+                                            </CombinedGeometry>
+                                        </Path.Data>
+                                    </Path>
+                                    <!-- 1 зірка -->
+                                    <Path Data="M20,5 L20.6,6.8 L22.5,6.8 L21,7.9 L21.5,9.7 L20,8.6 L18.5,9.7 L19,7.9 L17.5,6.8 L19.4,6.8 Z"
+                                          Fill="#E9D5FF" Opacity="0.9"/>
+                                </Grid>
+
+                                <!-- ══ 🌙 ВЕЧІР 21:30–23:00 ════════════════════════════════════ -->
+                                <Grid x:Name="IconMoon" Visibility="Collapsed">
+                                    <Grid.Resources>
+                                        <RadialGradientBrush x:Key="MoonGrad" GradientOrigin="0.35,0.35" Center="0.5,0.5" RadiusX="0.55" RadiusY="0.55">
+                                            <GradientStop Color="#EDE9FE" Offset="0"/>
+                                            <GradientStop Color="#A78BFA" Offset="0.55"/>
+                                            <GradientStop Color="#7C3AED" Offset="1"/>
+                                        </RadialGradientBrush>
+                                    </Grid.Resources>
+                                    <!-- Місяць-серп -->
+                                    <Path Fill="{StaticResource MoonGrad}">
+                                        <Path.Data>
+                                            <CombinedGeometry GeometryCombineMode="Exclude">
+                                                <CombinedGeometry.Geometry1>
+                                                    <EllipseGeometry Center="11,12" RadiusX="7.5" RadiusY="7.5"/>
+                                                </CombinedGeometry.Geometry1>
+                                                <CombinedGeometry.Geometry2>
+                                                    <EllipseGeometry Center="14.5,9" RadiusX="6.5" RadiusY="6.5"/>
+                                                </CombinedGeometry.Geometry2>
+                                            </CombinedGeometry>
+                                        </Path.Data>
+                                    </Path>
+                                    <!-- 2 зірки -->
+                                    <Path Data="M20,4 L20.5,5.5 L22,5.5 L20.8,6.4 L21.2,8 L20,7 L18.8,8 L19.2,6.4 L18,5.5 L19.5,5.5 Z"
+                                          Fill="#DDD6FE" Opacity="0.95"/>
+                                    <Path Data="M21,11 L21.3,12 L22.3,12 L21.5,12.6 L21.8,13.6 L21,13 L20.2,13.6 L20.5,12.6 L19.7,12 L20.7,12 Z"
+                                          Fill="#DDD6FE" Opacity="0.75" RenderTransformOrigin="0.5,0.5">
+                                        <Path.RenderTransform><ScaleTransform ScaleX="0.75" ScaleY="0.75"/></Path.RenderTransform>
+                                    </Path>
+                                </Grid>
+
+                                <!-- ══ 🌑 НІЧ 23:00–5:00 ══════════════════════════════════════ -->
+                                <Grid x:Name="IconNight" Visibility="Collapsed">
+                                    <Grid.Resources>
+                                        <RadialGradientBrush x:Key="NightMoonGrad" GradientOrigin="0.32,0.32" Center="0.5,0.5" RadiusX="0.55" RadiusY="0.55">
+                                            <GradientStop Color="#E0E7FF" Offset="0"/>
+                                            <GradientStop Color="#818CF8" Offset="0.5"/>
+                                            <GradientStop Color="#4338CA" Offset="1"/>
+                                        </RadialGradientBrush>
+                                    </Grid.Resources>
+                                    <!-- Місяць-серп темніший -->
+                                    <Path Fill="{StaticResource NightMoonGrad}">
+                                        <Path.Data>
+                                            <CombinedGeometry GeometryCombineMode="Exclude">
+                                                <CombinedGeometry.Geometry1>
+                                                    <EllipseGeometry Center="11,12" RadiusX="7.5" RadiusY="7.5"/>
+                                                </CombinedGeometry.Geometry1>
+                                                <CombinedGeometry.Geometry2>
+                                                    <EllipseGeometry Center="14.5,9" RadiusX="6.5" RadiusY="6.5"/>
+                                                </CombinedGeometry.Geometry2>
+                                            </CombinedGeometry>
+                                        </Path.Data>
+                                    </Path>
+                                    <!-- 3 зірки різного розміру -->
+                                    <Path Data="M20,3.5 L20.55,5.2 L22.3,5.2 L20.9,6.2 L21.4,7.9 L20,6.85 L18.6,7.9 L19.1,6.2 L17.7,5.2 L19.45,5.2 Z"
+                                          Fill="#C7D2FE" Opacity="1"/>
+                                    <Path Data="M21.5,11 L21.8,12 L22.8,12 L22,12.6 L22.3,13.6 L21.5,13 L20.7,13.6 L21,12.6 L20.2,12 L21.2,12 Z"
+                                          Fill="#C7D2FE" Opacity="0.8" RenderTransformOrigin="0.5,0.5">
+                                        <Path.RenderTransform><ScaleTransform ScaleX="0.7" ScaleY="0.7"/></Path.RenderTransform>
+                                    </Path>
+                                    <Ellipse Width="2" Height="2" Fill="#A5B4FC" Opacity="0.9"
+                                             HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,4"/>
+                                </Grid>
+
+                            </Grid>
+                        </Viewbox>
+
+                        <TextBlock x:Name="ClockText" Text="12:00" Foreground="#E5E5EA" FontSize="14.5" FontWeight="Bold"
+                                   VerticalAlignment="Center" FontFamily="{StaticResource IOSFont}"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- 2. COMPACT MEDIA VIEW (Sleek pill) -->
+                <Grid x:Name="CompactMediaView" Visibility="Collapsed" Margin="7,0,8,0" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Mini Album Art (22x22 circle) -->
+                    <Border Grid.Column="0" Width="22" Height="22" Background="#1C1C1E" VerticalAlignment="Center">
+                        <Border.Clip>
+                            <RectangleGeometry Rect="0,0,22,22" RadiusX="11" RadiusY="11"/>
+                        </Border.Clip>
+                        <Grid>
+                            <Image x:Name="MiniAlbumArt" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <Path x:Name="MiniMusicNote" Visibility="Collapsed" Data="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
+                                  Fill="#8E8E93" Stretch="Uniform" Width="11" Height="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Scrolling Ping-Pong Title (Smooth bounce scroll with delays) -->
+                    <Grid x:Name="MiniTickerContainer" Grid.Column="1" Height="20" Margin="8,0,8,0" VerticalAlignment="Center" ClipToBounds="True">
+                        <StackPanel x:Name="MiniTickerTrack" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <StackPanel.RenderTransform>
+                                <TranslateTransform x:Name="MiniTickerTranslate" X="0" Y="0"/>
+                            </StackPanel.RenderTransform>
+                            <TextBlock x:Name="MiniTrackTitle1" Text="Трек"
+                                       Foreground="#FFFFFF" FontSize="12" FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource IOSFont}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Equalizer Bars (Minimalist soft silver-white, 4 round dots when paused) -->
+                    <StackPanel x:Name="EqualizerBars" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="2,0,2,0">
+                        <Border x:Name="Bar1" Width="2.5" Height="2.5" Background="#E5E5EA" CornerRadius="1.25" Margin="1,0"/>
+                        <Border x:Name="Bar2" Width="2.5" Height="2.5" Background="#E5E5EA" CornerRadius="1.25" Margin="1,0"/>
+                        <Border x:Name="Bar3" Width="2.5" Height="2.5" Background="#E5E5EA" CornerRadius="1.25" Margin="1,0"/>
+                        <Border x:Name="Bar4" Width="2.5" Height="2.5" Background="#E5E5EA" CornerRadius="1.25" Margin="1,0"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- 3. COMPACT VOLUME VIEW (Minimalist HUD) -->
+                <Grid x:Name="CompactVolumeView" Visibility="Collapsed" Margin="8,0,8,0" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Іконка динаміка: звичайна + перекреслена (mute) -->
+                    <Grid Grid.Column="0" Width="13" Height="13" VerticalAlignment="Center" Margin="0,0,6,0">
+                        <Path x:Name="VolumeIcon"
+                              Data="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+                              Fill="#FFFFFF" Stretch="Uniform" Width="13" Height="13"/>
+                        <Path x:Name="VolumeMuteIcon" Visibility="Collapsed"
+                              Data="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"
+                              Fill="#FF3B30" Stretch="Uniform" Width="13" Height="13"/>
+                    </Grid>
+
+                    <Border Grid.Column="1" Height="4.5" CornerRadius="2.25" Background="#26FFFFFF" VerticalAlignment="Center" Margin="2,0,8,0">
+                        <Grid HorizontalAlignment="Left">
+                            <Border x:Name="VolumeFillBar" Width="45" Height="4.5" CornerRadius="2.25" Background="#FFFFFF"/>
+                        </Grid>
+                    </Border>
+
+                    <TextBlock x:Name="VolumeText" Grid.Column="2" Text="50%" Foreground="#A1A1AA" FontSize="11" FontWeight="Bold" VerticalAlignment="Center" FontFamily="{StaticResource IOSFont}"/>
+                </Grid>
+
+                <!-- 4. EXPANDED MEDIA VIEW (Minimalist Apple Card, Spacious & Perfectly Aligned) -->
+                <Grid x:Name="ExpandedMediaView" Visibility="Collapsed" Margin="18,12,18,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Top Row: Album Art + Track Info -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Album Art with iOS Rounded Squircle Corners (52x52) -->
+                        <Border x:Name="AlbumArtBorder" Grid.Column="0" Width="52" Height="52" Background="#1C1C1E" VerticalAlignment="Center"
+                                RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="AlbumArtScale" ScaleX="1" ScaleY="1"/>
+                            </Border.RenderTransform>
+                            <Border.Clip>
+                                <RectangleGeometry Rect="0,0,52,52" RadiusX="12" RadiusY="12"/>
+                            </Border.Clip>
+                            <Grid>
+                                <Image x:Name="LargeAlbumArt" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <Path x:Name="LargeMusicNote" Visibility="Collapsed" Data="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
+                                      Fill="#8E8E93" Stretch="Uniform" Width="22" Height="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Titles -->
+                        <StackPanel x:Name="TitlesPanel" Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center"
+                                    RenderTransformOrigin="0,0.5">
+                            <StackPanel.RenderTransform>
+                                <TranslateTransform x:Name="TitlesTranslate" X="0" Y="0"/>
+                            </StackPanel.RenderTransform>
+                            <TextBlock x:Name="ExpandedTrackTitle" Text="Название трека" Foreground="#FFFFFF" FontSize="15" FontWeight="Bold"
+                                       TextTrimming="CharacterEllipsis" FontFamily="{StaticResource IOSFont}"/>
+                            <TextBlock x:Name="ExpandedArtist" Text="Исполнитель" Foreground="#8E8E93" FontSize="12.5" Margin="0,3,0,0" FontWeight="Medium"
+                                       TextTrimming="CharacterEllipsis" FontFamily="{StaticResource IOSFont}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Middle Row: Interactive Apple Scrubber Bar -->
+                    <Grid x:Name="TimelineGrid" Grid.Row="1" Margin="0,8,0,3" VerticalAlignment="Center"
+                          RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <TranslateTransform x:Name="TimelineTranslate" X="0" Y="0"/>
+                        </Grid.RenderTransform>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Hit-target container for scrubbing (Height 16 gives generous touch/click target) -->
+                        <Grid x:Name="ScrubberContainer" Grid.Row="0" Height="16" Cursor="Hand" Background="Transparent"
+                              MouseLeftButtonDown="Scrubber_MouseLeftButtonDown"
+                              MouseLeftButtonUp="Scrubber_MouseLeftButtonUp"
+                              MouseMove="Scrubber_MouseMove"
+                              MouseEnter="Scrubber_MouseEnter"
+                              MouseLeave="Scrubber_MouseLeave"
+                              PreviewMouseWheel="Scrubber_MouseWheel"
+                              LostMouseCapture="Scrubber_LostMouseCapture">
+
+                            <!-- Track Background -->
+                            <Border x:Name="ScrubberTrack" Height="4" CornerRadius="2" Background="#26FFFFFF" VerticalAlignment="Center">
+                                <Grid HorizontalAlignment="Left">
+                                    <!-- Filled Progress Bar -->
+                                    <Border x:Name="ScrubberFill" Width="0" Height="4" CornerRadius="2" Background="#FFFFFF"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Scrubber Thumb / Knob (Apple style circle with soft shadow) -->
+                            <Canvas Height="16" ClipToBounds="False" IsHitTestVisible="False">
+                                <Grid x:Name="ScrubberThumbGrid" Width="10" Height="10" Margin="-5,3,0,0" RenderTransformOrigin="0.5,0.5">
+                                    <Grid.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform x:Name="ScrubberThumbScale" ScaleX="1" ScaleY="1"/>
+                                            <TranslateTransform x:Name="ScrubberThumbTranslate" X="0" Y="0"/>
+                                        </TransformGroup>
+                                    </Grid.RenderTransform>
+                                    <Ellipse Width="10" Height="10" Fill="#FFFFFF">
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect Color="#000000" BlurRadius="4" ShadowDepth="1" Opacity="0.45"/>
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                </Grid>
+                            </Canvas>
+                        </Grid>
+
+                        <!-- Time Labels: Elapsed (left) and Remaining (right) -->
+                        <Grid Grid.Row="1" Margin="1,2,1,0">
+                            <TextBlock x:Name="CurrentTimeText" Text="0:00" Foreground="#8E8E93" FontSize="11" FontWeight="SemiBold"
+                                       HorizontalAlignment="Left" FontFamily="{StaticResource IOSFont}"/>
+                            <TextBlock x:Name="RemainingTimeText" Text="-0:00" Foreground="#8E8E93" FontSize="11" FontWeight="SemiBold"
+                                       HorizontalAlignment="Right" FontFamily="{StaticResource IOSFont}"/>
+                        </Grid>
+                    </Grid>
+
+                    <!-- Bottom Row: Controls (Shuffle, Prev, Play/Pause, Next, Repeat) - Mathematically Equidistant & Centered -->
+                    <Grid x:Name="ControlsGrid" Grid.Row="2" Margin="0,3,0,2" VerticalAlignment="Center"
+                          RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <TranslateTransform x:Name="ControlsTranslate" X="0" Y="0"/>
+                        </Grid.RenderTransform>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <!-- 1. Shuffle (Mix) Button -->
+                            <Button x:Name="ShuffleBtn" Style="{StaticResource IslandButtonStyle}" Width="38" Height="38" VerticalAlignment="Center" Margin="0,0,16,0"
+                                    Click="ShuffleButton_Click">
+                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Viewbox Width="17" Height="17" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path x:Name="ShuffleIcon"
+                                                  Data="M 18,14 L 22,18 L 18,22 M 18,2 L 22,6 L 18,10 M 2,18 H 3.973 A 4,4 0 0 0 7.273,16.3 L 12.727,7.7 A 4,4 0 0 1 16.027,6 H 22 M 2,6 H 3.972 A 4,4 0 0 1 7.572,8.2 M 22,18 H 15.959 A 4,4 0 0 1 12.659,16.2 L 12.3,15.75"
+                                                  Stroke="#8E8E93" StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                                  Fill="Transparent"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                    <Ellipse x:Name="ShuffleDot" Width="3" Height="3" Fill="#30D158" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,1" Visibility="Collapsed"/>
+                                </Grid>
+                            </Button>
+
+                            <!-- 2. Prev Button -->
+                            <Button Style="{StaticResource IslandButtonStyle}" Width="38" Height="38" VerticalAlignment="Center" Margin="0,0,16,0" Click="PrevButton_Click">
+                                <Path Data="M6 6h2v12H6zm3.5 6l8.5 6V6z" Fill="#FFFFFF" Stretch="Uniform" Width="15" Height="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+
+                            <!-- 3. Play/Pause Button -->
+                            <Button Style="{StaticResource IslandButtonStyle}" Width="38" Height="38" VerticalAlignment="Center" Margin="0,0,16,0" Click="PlayPauseButton_Click">
+                                <Path x:Name="PlayPauseIcon" Data="M8 5v14l11-7z" Fill="#FFFFFF" Stretch="Uniform" Width="17" Height="17" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+
+                            <!-- 4. Next Button -->
+                            <Button Style="{StaticResource IslandButtonStyle}" Width="38" Height="38" VerticalAlignment="Center" Margin="0,0,16,0" Click="NextButton_Click">
+                                <Path Data="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" Fill="#FFFFFF" Stretch="Uniform" Width="15" Height="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+
+                            <!-- 5. Repeat Button (Off / Playlist / Track) -->
+                            <Button x:Name="RepeatBtn" Style="{StaticResource IslandButtonStyle}" Width="38" Height="38" VerticalAlignment="Center"
+                                    Click="RepeatButton_Click">
+                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Viewbox Width="17" Height="17" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path x:Name="RepeatIcon"
+                                                  Data="M 17,2 L 21,6 L 17,10 M 3,11 V 10 A 4,4 0 0 1 7,6 H 21 M 7,22 L 3,18 L 7,14 M 21,13 V 14 A 4,4 0 0 1 17,18 H 3"
+                                                  Stroke="#8E8E93" StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                                  Fill="Transparent"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                    <Ellipse x:Name="RepeatDot" Width="3" Height="3" Fill="#30D158" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,1" Visibility="Collapsed"/>
+                                </Grid>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+
+                <!-- 5. INCOMING CALL VIEW (Apple Dynamic Island Style, Spacious & Clean) -->
+                <Grid x:Name="IncomingCallView" Visibility="Collapsed" Margin="14,0,14,0" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <!-- Avatar + App Badge -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Caller Name + Seamless LED Marquee Ticker -->
+                        <ColumnDefinition Width="*"/>
+                        <!-- Decline & Answer Buttons -->
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: Caller Avatar with App Badge -->
+                    <Grid Grid.Column="0" VerticalAlignment="Center">
+                        <Border Width="42" Height="42" CornerRadius="21" Background="#1C1C1E" BorderBrush="#25FFFFFF" BorderThickness="1">
+                            <Border.Clip>
+                                <RectangleGeometry Rect="0,0,42,42" RadiusX="21" RadiusY="21"/>
+                            </Border.Clip>
+                            <Grid>
+                                <Image x:Name="CallerAvatarImage" Stretch="UniformToFill" Visibility="Collapsed"/>
+                                <Border x:Name="CallerAvatarFallback" Background="#1E3A5F">
+                                    <TextBlock x:Name="CallerInitialsText" Text="П" Foreground="#FFFFFF" FontSize="16" FontWeight="Bold"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="{StaticResource IOSFont}"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <!-- App Badge in corner (Telegram / Discord) with cut-out black border -->
+                        <Border Width="17" Height="17" CornerRadius="8.5" BorderBrush="#000000" BorderThickness="1.5"
+                                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-1,-1">
+                            <Grid x:Name="AppBadgeGrid" Background="#24A1DE">
+                                <!-- Telegram Paper Airplane Icon -->
+                                <Path x:Name="TelegramBadgeIcon" Data="M2.05 10.95c-.32.14-.3.59.04.7l4.31 1.45 1.7 5.17c.12.37.59.48.86.2l2.36-2.4 4.7 3.47c.36.27.87.08.97-.36L20 4.14c.1-.47-.36-.88-.8-.7L2.05 10.95z"
+                                      Fill="#FFFFFF" Stretch="Uniform" Width="9.5" Height="9.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <!-- Discord Icon -->
+                                <Path x:Name="DiscordBadgeIcon" Visibility="Collapsed" Data="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09-.01-.02-.04-.03-.07-.03-1.5.26-2.93.71-4.27 1.33-.01 0-.02.01-.03.02-2.72 4.07-3.47 8.03-3.1 11.95 0 .02.01.04.03.05 1.8 1.32 3.53 2.12 5.24 2.65.03.01.06 0 .07-.02.4-.55.76-1.13 1.07-1.74.02-.04 0-.08-.04-.09-.57-.22-1.11-.48-1.64-.78-.04-.02-.04-.08-.01-.11.11-.08.22-.17.33-.25.02-.02.05-.02.07-.01 3.44 1.57 7.15 1.57 10.55 0 .02-.01.05-.01.07.01.11.09.22.17.33.26.04.03.04.08-.01.11-.52.31-1.07.56-1.64.78-.04.01-.05.06-.04.09.32.61.68 1.19 1.07 1.74.03.01.06.02.09.02 1.72-.53 3.45-1.33 5.25-2.65.02-.01.03-.03.03-.05.44-4.53-.73-8.46-3.1-11.95-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12 0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12 0 1.17-.83 2.12-1.89 2.12z"
+                                      Fill="#FFFFFF" Stretch="Uniform" Width="10.5" Height="10.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- Center: Caller Nickname + Subtitle/Ticker or Duration -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="14,0,14,0">
+                        <TextBlock x:Name="CallerNameText" Text="Павел Дуров" Foreground="#FFFFFF" FontSize="14.5" FontWeight="Bold"
+                                   TextTrimming="CharacterEllipsis" FontFamily="{StaticResource IOSFont}"/>
+
+                        <!-- 1. Incoming Call State: Running LED Ticker -->
+                        <Grid x:Name="CallTickerContainer" Height="18" Margin="0,3,0,0">
+                            <Grid.OpacityMask>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#00000000" Offset="0"/>
+                                    <GradientStop Color="#FF000000" Offset="0.05"/>
+                                    <GradientStop Color="#FF000000" Offset="0.95"/>
+                                    <GradientStop Color="#00000000" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Grid.OpacityMask>
+                            <Canvas x:Name="TickerCanvas" ClipToBounds="True" Height="18">
+                                <StackPanel x:Name="TickerTrack" Orientation="Horizontal">
+                                    <StackPanel.RenderTransform>
+                                        <TranslateTransform x:Name="TickerTranslate" X="0" Y="0"/>
+                                    </StackPanel.RenderTransform>
+                                    <TextBlock x:Name="CallerTickerText1" Text="Входящий вызов • Telegram   •   "
+                                               Foreground="#7DD3FC" FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"
+                                               FontFamily="{StaticResource IOSFont}"/>
+                                    <TextBlock x:Name="CallerTickerText2" Text="Входящий вызов • Telegram   •   "
+                                               Foreground="#7DD3FC" FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"
+                                               FontFamily="{StaticResource IOSFont}"/>
+                                </StackPanel>
+                            </Canvas>
+                        </Grid>
+
+                        <!-- 2. Active In-Call State: Live Call Duration Timer -->
+                        <StackPanel x:Name="CallDurationPanel" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,3,0,0" Visibility="Collapsed">
+                            <Ellipse x:Name="CallPulseDot" Width="6" Height="6" Fill="#30D158" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock x:Name="CallDurationText" Text="00:00" Foreground="#30D158" FontSize="12" FontWeight="Bold"
+                                       FontFamily="{StaticResource IOSFont}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Right: Action Buttons (Incoming vs Active In-Call) -->
+                    <Grid Grid.Column="2" VerticalAlignment="Center">
+                        <!-- State A: Incoming Call (Decline + Answer) -->
+                        <StackPanel x:Name="IncomingButtonsPanel" Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Decline Button (Red) -->
+                            <Button x:Name="DeclineCallBtn" Style="{StaticResource CallActionButtonStyle}" Width="40" Height="40"
+                                    Background="#FF3B30" Margin="0,0,10,0" Click="DeclineCallBtn_Click" ToolTip="Отклонить">
+                                <Path Data="M 6.5,8 C 7,8 7.5,8.4 7.8,8.9 L 9,11.3 C 9.2,11.7 9.1,12.2 8.7,12.5 L 7.3,13.6 C 8.4,15.8 10.2,17.6 12.4,18.7 L 13.5,17.3 C 13.8,16.9 14.3,16.8 14.7,17 L 17.1,18.2 C 17.6,18.5 18,19 18,19.5 L 18,21.5 C 18,22.3 17.3,23 16.5,23 C 8.5,23 2,16.5 2,8.5 C 2,7.7 2.7,7 3.5,7 L 5.5,7 C 6,7 6.5,7.5 6.5,8 Z"
+                                      Fill="#FFFFFF" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      RenderTransformOrigin="0.5,0.5">
+                                    <Path.RenderTransform>
+                                        <RotateTransform Angle="135"/>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Button>
+
+                            <!-- Answer Button (Green) -->
+                            <Button x:Name="AnswerCallBtn" Style="{StaticResource CallActionButtonStyle}" Width="40" Height="40"
+                                    Background="#30D158" Click="AnswerCallBtn_Click" ToolTip="Ответить">
+                                <Path Data="M 6.5,8 C 7,8 7.5,8.4 7.8,8.9 L 9,11.3 C 9.2,11.7 9.1,12.2 8.7,12.5 L 7.3,13.6 C 8.4,15.8 10.2,17.6 12.4,18.7 L 13.5,17.3 C 13.8,16.9 14.3,16.8 14.7,17 L 17.1,18.2 C 17.6,18.5 18,19 18,19.5 L 18,21.5 C 18,22.3 17.3,23 16.5,23 C 8.5,23 2,16.5 2,8.5 C 2,7.7 2.7,7 3.5,7 L 5.5,7 C 6,7 6.5,7.5 6.5,8 Z"
+                                      Fill="#FFFFFF" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+                        </StackPanel>
+
+                        <!-- State B: Active In-Call (Mute + Hang Up) -->
+                        <StackPanel x:Name="ActiveButtonsPanel" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
+                            <!-- Mute Microphone Button -->
+                            <Button x:Name="MuteMicBtn" Style="{StaticResource CallActionButtonStyle}" Width="40" Height="40"
+                                    Background="#2C2C2E" Margin="0,0,10,0" Click="MuteMicBtn_Click" ToolTip="Выключить микрофон">
+                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Path x:Name="MicOnIcon"
+                                          Data="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"
+                                          Fill="#FFFFFF" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Path x:Name="MicOffIcon" Visibility="Collapsed"
+                                          Data="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3L3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c1.35-.2 2.6-.74 3.65-1.54l3.08 3.08 1.27-1.27L4.27 3z"
+                                          Fill="#FFFFFF" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Button>
+
+                            <!-- Hang Up Button (Red) -->
+                            <Button x:Name="HangUpCallBtn" Style="{StaticResource CallActionButtonStyle}" Width="40" Height="40"
+                                    Background="#FF3B30" Click="HangUpCallBtn_Click" ToolTip="Завершить вызов">
+                                <Path Data="M 6.5,8 C 7,8 7.5,8.4 7.8,8.9 L 9,11.3 C 9.2,11.7 9.1,12.2 8.7,12.5 L 7.3,13.6 C 8.4,15.8 10.2,17.6 12.4,18.7 L 13.5,17.3 C 13.8,16.9 14.3,16.8 14.7,17 L 17.1,18.2 C 17.6,18.5 18,19 18,19.5 L 18,21.5 C 18,22.3 17.3,23 16.5,23 C 8.5,23 2,16.5 2,8.5 C 2,7.7 2.7,7 3.5,7 L 5.5,7 C 6,7 6.5,7.5 6.5,8 Z"
+                                      Fill="#FFFFFF" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      RenderTransformOrigin="0.5,0.5">
+                                    <Path.RenderTransform>
+                                        <RotateTransform Angle="135"/>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+
+                <!-- 6. NOTIFICATION VIEW (Minimalist iOS Dynamic Island Notification Banner) -->
+                <Grid x:Name="NotificationView" Visibility="Collapsed" Margin="10,0,12,0" VerticalAlignment="Center"
+                      Cursor="Hand" MouseDown="NotificationView_MouseDown">
+                    <Grid.ColumnDefinitions>
+                        <!-- App Icon / Badge -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Sender Name & Message Text Preview -->
+                        <ColumnDefinition Width="*"/>
+                        <!-- Time Badge -->
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- App Icon / Avatar (30x30 squircle with spring scale) -->
+                    <Border x:Name="NotifBadgeBorder" Grid.Column="0" Width="30" Height="30" CornerRadius="15" Background="#24A1DE"
+                            VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <ScaleTransform x:Name="NotifBadgeScale" ScaleX="1" ScaleY="1"/>
+                        </Border.RenderTransform>
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <!-- Telegram Icon -->
+                            <Path x:Name="NotifTelegramIcon" Visibility="Collapsed"
+                                  Data="M2.05 10.95c-.32.14-.3.59.04.7l4.31 1.45 1.7 5.17c.12.37.59.48.86.2l2.36-2.4 4.7 3.47c.36.27.87.08.97-.36L20 4.14c.1-.47-.36-.88-.8-.7L2.05 10.95z"
+                                  Fill="#FFFFFF" Stretch="Uniform" Width="14" Height="14"/>
+                            <!-- Discord Icon -->
+                            <Path x:Name="NotifDiscordIcon" Visibility="Collapsed"
+                                  Data="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09-.01-.02-.04-.03-.07-.03-1.5.26-2.93.71-4.27 1.33-.01 0-.02.01-.03.02-2.72 4.07-3.47 8.03-3.1 11.95 0 .02.01.04.03.05 1.8 1.32 3.53 2.12 5.24 2.65.03.01.06 0 .07-.02.4-.55.76-1.13 1.07-1.74.02-.04 0-.08-.04-.09-.57-.22-1.11-.48-1.64-.78-.04-.02-.04-.08-.01-.11.11-.08.22-.17.33-.25.02-.02.05-.02.07-.01 3.44 1.57 7.15 1.57 10.55 0 .02-.01.05-.01.07.01.11.09.22.17.33.26.04.03.04.08-.01.11-.52.31-1.07.56-1.64.78-.04.01-.05.06-.04.09.32.61.68 1.19 1.07 1.74.03.01.06.02.09.02 1.72-.53 3.45-1.33 5.25-2.65.02-.01.03-.03.03-.05.44-4.53-.73-8.46-3.1-11.95-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12 0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12 0 1.17-.83 2.12-1.89 2.12z"
+                                  Fill="#FFFFFF" Stretch="Uniform" Width="15" Height="15"/>
+                            <!-- WhatsApp Icon -->
+                            <Path x:Name="NotifWhatsAppIcon" Visibility="Collapsed"
+                                  Data="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.82 12.04 21.82C17.5 21.82 21.95 17.37 21.95 11.91C21.95 6.45 17.5 2 12.04 2M12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.82L4.44 19.64L5.27 16.61L5.07 16.3C4.24 14.98 3.81 13.47 3.81 11.91C3.81 7.37 7.5 3.68 12.04 3.68C16.58 3.68 20.27 7.37 20.27 11.91C20.27 16.45 16.58 20.15 12.04 20.15M16.57 14.39C16.32 14.26 15.1 13.66 14.87 13.58C14.65 13.5 14.48 13.46 14.31 13.71C14.15 13.96 13.67 14.53 13.53 14.7C13.38 14.86 13.24 14.88 12.99 14.76C12.74 14.63 11.94 14.37 11 13.53C10.27 12.87 9.77 12.07 9.63 11.82C9.48 11.57 9.61 11.44 9.74 11.31C9.85 11.2 9.99 11.02 10.11 10.87C10.24 10.73 10.28 10.62 10.36 10.46C10.45 10.29 10.4 10.15 10.34 10.02C10.28 9.9 9.78 8.68 9.58 8.18C9.38 7.69 9.17 7.76 9.02 7.75C8.88 7.74 8.71 7.74 8.55 7.74C8.38 7.74 8.11 7.8 7.89 8.05C7.66 8.3 7.03 8.89 7.03 10.1C7.03 11.31 7.91 12.47 8.03 12.63C8.16 12.8 9.77 15.28 12.23 16.34C12.82 16.59 13.27 16.74 13.63 16.85C14.22 17.04 14.76 17.01 15.19 16.95C15.66 16.88 16.64 16.36 16.85 15.78C17.05 15.19 17.05 14.69 16.99 14.59C16.93 14.49 16.81 14.43 16.57 14.39Z"
+                                  Fill="#FFFFFF" Stretch="Uniform" Width="16" Height="16"/>
+                            <!-- Mail Icon -->
+                            <Path x:Name="NotifMailIcon" Visibility="Collapsed"
+                                  Data="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+                                  Fill="#FFFFFF" Stretch="Uniform" Width="15" Height="15"/>
+                            <!-- Generic Message Bubble Icon -->
+                            <Path x:Name="NotifGenericIcon" Visibility="Collapsed"
+                                  Data="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"
+                                  Fill="#FFFFFF" Stretch="Uniform" Width="14" Height="14"/>
+                            <!-- App Initial Fallback -->
+                            <TextBlock x:Name="NotifAppInitialText" Visibility="Collapsed" Text="T" Foreground="#FFFFFF" FontSize="13" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="{StaticResource IOSFont}"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Center: Sender & Preview Text -->
+                    <StackPanel x:Name="NotifTextPanel" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,10,0"
+                                RenderTransformOrigin="0,0.5">
+                        <StackPanel.RenderTransform>
+                            <TranslateTransform x:Name="NotifTextTranslate" X="0" Y="0"/>
+                        </StackPanel.RenderTransform>
+                        <TextBlock x:Name="NotifSenderText" Text="Павел Дуров" Foreground="#FFFFFF" FontSize="13" FontWeight="Bold"
+                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" FontFamily="{StaticResource IOSFont}"/>
+                        <TextBlock x:Name="NotifMessageText" Text="Привет! Как дела?" Foreground="#A1A1AA" FontSize="11.5" Margin="0,1,0,0" FontWeight="Medium"
+                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" FontFamily="{StaticResource IOSFont}"/>
+                    </StackPanel>
+
+                    <!-- Right: Time text -->
+                    <TextBlock x:Name="NotifTimeText" Grid.Column="2" Text="сейчас" Foreground="#71717A" FontSize="10.5" FontWeight="SemiBold"
+                               VerticalAlignment="Center" Margin="0,0,4,0" FontFamily="{StaticResource IOSFont}"/>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
