@@ -428,17 +428,18 @@
                         </Grid>
                     </Border>
 
-                    <!-- Scrolling Ping-Pong Title (Smooth bounce scroll with delays) -->
-                    <Grid x:Name="MiniTickerContainer" Grid.Column="1" Height="20" Margin="8,0,8,0" VerticalAlignment="Center" ClipToBounds="True">
-                        <StackPanel x:Name="MiniTickerTrack" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <StackPanel.RenderTransform>
+                    <!-- Compact Track Title (Crisp, anchored, with ellipsis on overflow) -->
+                    <Grid x:Name="MiniTickerContainer" Grid.Column="1" Height="20" Margin="8,0,8,0" VerticalAlignment="Center">
+                        <TextBlock x:Name="MiniTrackTitle1" Text="Трек"
+                                   Foreground="#FFFFFF" FontSize="12" FontWeight="Bold"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   FontFamily="{StaticResource IOSFont}">
+                            <TextBlock.RenderTransform>
                                 <TranslateTransform x:Name="MiniTickerTranslate" X="0" Y="0"/>
-                            </StackPanel.RenderTransform>
-                            <TextBlock x:Name="MiniTrackTitle1" Text="Трек"
-                                       Foreground="#FFFFFF" FontSize="12" FontWeight="Bold"
-                                       VerticalAlignment="Center"
-                                       FontFamily="{StaticResource IOSFont}"/>
-                        </StackPanel>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
                     </Grid>
 
                     <!-- Equalizer Bars (Minimalist soft silver-white, 4 round dots when paused) -->

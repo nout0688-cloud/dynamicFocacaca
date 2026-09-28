@@ -102,18 +102,6 @@ namespace DynamicIsland
         private static readonly SolidColorBrush INACTIVE_BRUSH = new(System.Windows.Media.Color.FromRgb(0x8E, 0x8E, 0x93));
 
         private string _currentMiniText = "";
-        private readonly LinearGradientBrush _tickerMask = new()
-        {
-            StartPoint = new System.Windows.Point(0, 0),
-            EndPoint = new System.Windows.Point(1, 0),
-            GradientStops = new GradientStopCollection
-            {
-                new GradientStop(System.Windows.Media.Color.FromArgb(0, 0, 0, 0), 0.0),
-                new GradientStop(System.Windows.Media.Color.FromArgb(255, 0, 0, 0), 0.05),
-                new GradientStop(System.Windows.Media.Color.FromArgb(255, 0, 0, 0), 0.95),
-                new GradientStop(System.Windows.Media.Color.FromArgb(0, 0, 0, 0), 1.0)
-            }
-        };
 
         public MainWindow()
         {
@@ -140,13 +128,6 @@ namespace DynamicIsland
                 IslandBorder.CornerRadius = new CornerRadius(Math.Min(32, IslandBorder.ActualHeight / 2));
             };
 
-            MiniTickerContainer.SizeChanged += (s, e) =>
-            {
-                if (MiniTickerContainer.ActualWidth > 30 && !string.IsNullOrEmpty(_currentMiniText))
-                {
-                    UpdateMiniTicker(_currentMiniText);
-                }
-            };
 
             _clockTimer.Interval = TimeSpan.FromSeconds(1);
             _clockTimer.Tick += (s, e) =>
@@ -553,7 +534,7 @@ namespace DynamicIsland
 
                     if (_currentMode == IslandMode.CompactMedia && !_isExpanded && !_isShowingVolume && !_isHidingForGame && !IsCallDisplayActive && !_isNotificationActive)
                     {
-                        AnimateIslandSize(GetCompactMediaWidth(), 36, useSpring: true);
+                        AnimateIslandSize(GetCompactMediaWidth(), 37, useSpring: true);
                     }
 
                     UpdateMiniTicker(fullText);
@@ -727,7 +708,7 @@ namespace DynamicIsland
 
                 double textWidth = formatted.Width;
                 double needed = textWidth + 76; // 22 album art + 15 outer margins + 16 inner margins + 22 equalizer bars + 1 padding
-                return Math.Clamp(Math.Ceiling(needed), 210, 380);
+                return Math.Clamp(Math.Ceiling(needed), 210, 420);
             }
             catch
             {
@@ -946,71 +927,10 @@ namespace DynamicIsland
 
             MiniTrackTitle1.Text = text;
 
-            // Reset translation
+            // Текст всегда статичен, выровнен по левому краю без смещений и без масок
             MiniTickerTranslate.BeginAnimation(TranslateTransform.XProperty, null);
             MiniTickerTranslate.X = 0;
-
-            // Measure unconstrained text width
-            MiniTrackTitle1.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
-            double rawWidth = MiniTrackTitle1.DesiredSize.Width;
-
-            // Target width calculation: always based on target island width so transitions don't cause false scrolling
-            double targetIslandWidth = GetCompactMediaWidth();
-            double availableWidth = Math.Max(130, targetIslandWidth - 76);
-
-            double overflow = rawWidth - availableWidth;
-
-            // Если название полностью влезает: ничего не скроллить, стоит статично и красиво
-            if (overflow <= 6)
-            {
-                MiniTickerContainer.OpacityMask = null;
-                return;
-            }
-
-            // Если сверхдлинное и действительно не влезает:
-            // едет до конца -> ждет (2.0с) -> назад до начала -> ждет (2.5с)
-            MiniTickerContainer.OpacityMask = _tickerMask;
-
-            double scrollDistance = overflow + 10;
-            double speed = 26.0; // скорость скролла (px/s)
-            double scrollDuration = Math.Max(1.5, scrollDistance / speed);
-
-            double holdStart = 2.5; // комфортная пауза на старте, чтобы прочитать начало
-            double holdEnd = 2.0;   // пауза в конце, чтобы прочитать конец
-            double holdCycle = 2.5; // пауза перед повтором
-
-            double t0 = 0.0;
-            double t1 = t0 + holdStart;
-            double t2 = t1 + scrollDuration;
-            double t3 = t2 + holdEnd;
-            double t4 = t3 + scrollDuration;
-            double t5 = t4 + holdCycle;
-
-            var ease = new CubicEase { EasingMode = EasingMode.EaseInOut };
-
-            var keyFramesAnim = new DoubleAnimationUsingKeyFrames
-            {
-                Duration = TimeSpan.FromSeconds(t5),
-                RepeatBehavior = RepeatBehavior.Forever
-            };
-
-            // 1. Короткая пауза в начале
-            keyFramesAnim.KeyFrames.Add(new DiscreteDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.Zero)));
-            keyFramesAnim.KeyFrames.Add(new LinearDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(t1))));
-
-            // 2. Едет до конца названия
-            keyFramesAnim.KeyFrames.Add(new EasingDoubleKeyFrame(-scrollDistance, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(t2)), ease));
-
-            // 3. "Подождать чуть-чуть прям чуть-чуть"
-            keyFramesAnim.KeyFrames.Add(new LinearDoubleKeyFrame(-scrollDistance, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(t3))));
-
-            // 4. Назад до начала
-            keyFramesAnim.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(t4)), ease));
-
-            // 5. "Ждет опять" перед следующим кругом
-            keyFramesAnim.KeyFrames.Add(new LinearDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(t5))));
-
-            MiniTickerTranslate.BeginAnimation(TranslateTransform.XProperty, keyFramesAnim);
+            MiniTickerContainer.OpacityMask = null;
         }
 
         private void SwitchToCompactIdle()
