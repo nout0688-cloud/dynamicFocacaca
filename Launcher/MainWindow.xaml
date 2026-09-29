@@ -1,8 +1,8 @@
 <Window x:Class="DynamicIslandLauncher.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Dynamic Island Launcher"
-        Width="700" Height="620"
+        Title="Налаштування"
+        Width="520" Height="700"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -13,22 +13,22 @@
         MouseLeftButtonDown="Window_MouseLeftButtonDown">
 
     <Window.Resources>
-        <!-- Segmented Control Item Style -->
+        <!-- Segmented Radio Button (iOS 26 Style) -->
         <Style x:Key="SegmentedRadioButton" TargetType="RadioButton">
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Foreground" Value="#8E8E93"/>
             <Setter Property="FontFamily" Value="{StaticResource IOSFont}"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="12.5"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
-                        <Border x:Name="segBorder" Background="Transparent" CornerRadius="12" Padding="14,7">
+                        <Border x:Name="segBorder" Background="Transparent" CornerRadius="7" Padding="10,5" SnapsToDevicePixels="True">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="segBorder" Property="Background" Value="#30FFFFFF"/>
+                                <Setter TargetName="segBorder" Property="Background" Value="#636366"/>
                                 <Setter Property="Foreground" Value="#FFFFFF"/>
                                 <Setter Property="FontWeight" Value="Bold"/>
                             </Trigger>
@@ -40,75 +40,85 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Thin iOS ScrollBar Style -->
+        <Style TargetType="ScrollBar">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="Transparent">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate>
+                                                <Border Background="#40FFFFFF" CornerRadius="2.5"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
-    <!-- Outer Ambient Glow & Border -->
-    <Border Margin="16" CornerRadius="28" Background="#E6121215"
-            BorderBrush="#25FFFFFF" BorderThickness="1" SnapsToDevicePixels="True">
+    <!-- Main iPhone Silhouette Window Frame -->
+    <Border Margin="14" CornerRadius="30" Background="#000000"
+            BorderBrush="#2C2C2E" BorderThickness="1.2" SnapsToDevicePixels="True">
         <Border.Effect>
-            <DropShadowEffect BlurRadius="36" ShadowDepth="10" Opacity="0.55" Color="#000000"/>
+            <DropShadowEffect BlurRadius="45" ShadowDepth="12" Opacity="0.7" Color="#000000"/>
         </Border.Effect>
 
         <Grid ClipToBounds="True">
             <Grid.RowDefinitions>
-                <!-- 0: Window Header -->
-                <RowDefinition Height="56"/>
-                <!-- 1: Wizard Stepper -->
-                <RowDefinition Height="46"/>
-                <!-- 2: Wizard Content -->
+                <!-- 0: iOS Navigation Bar -->
+                <RowDefinition Height="52"/>
+                <!-- 1: Settings Scroll Content -->
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Top Specular Highlight Line (Liquid Glass effect) -->
-            <Border Grid.Row="0" Height="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="28,0,28,0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                        <GradientStop Color="#00FFFFFF" Offset="0.0"/>
-                        <GradientStop Color="#40FFFFFF" Offset="0.5"/>
-                        <GradientStop Color="#00FFFFFF" Offset="1.0"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-            </Border>
-
-            <!-- 0. Header (Title + Window Buttons) -->
-            <Grid Grid.Row="0" Margin="24,0,20,0" VerticalAlignment="Center">
-                <!-- Left: Mini Dynamic Island Badge -->
+            <!-- 0. Top iOS Navigation Bar (Draggable) -->
+            <Grid Grid.Row="0" Margin="20,0,16,0" VerticalAlignment="Center">
+                <!-- Left: Dynamic Island Status Indicator -->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Width="34" Height="18" CornerRadius="9" Background="#000000" BorderBrush="#33FFFFFF" BorderThickness="1" Margin="0,0,10,0">
+                    <Border Width="26" Height="14" CornerRadius="7" Background="#1C1C1E" BorderBrush="#33FFFFFF" BorderThickness="0.8" Margin="0,0,8,0">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <Ellipse Width="4" Height="4" Fill="#30D158" Margin="0,0,3,0"/>
-                            <Ellipse Width="3" Height="3" Fill="#0A84FF"/>
+                            <Ellipse Width="3" Height="3" Fill="#30D158" Margin="0,0,2,0"/>
+                            <Ellipse Width="2.5" Height="2.5" Fill="#0A84FF"/>
                         </StackPanel>
                     </Border>
-                    <TextBlock Text="Dynamic Island" Foreground="#FFFFFF" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
-                    <Border Background="#200A84FF" CornerRadius="6" Padding="6,2" Margin="8,0,0,0">
-                        <TextBlock Text="iOS 26" Foreground="#0A84FF" FontSize="10.5" FontWeight="Bold"/>
-                    </Border>
+                    <TextBlock Text="Dynamic Island" Foreground="#8E8E93" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
                 </StackPanel>
 
                 <!-- Right: Window Controls -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <!-- Minimize -->
-                    <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="MinimizeButton_Click" Margin="0,0,4,0">
+                    <!-- Minimize Button -->
+                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="MinimizeButton_Click" Margin="0,0,6,0">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <Border x:Name="b" Width="26" Height="26" CornerRadius="13" Background="#15FFFFFF">
-                                    <Path Data="M6 13h14" Stroke="#8E8E93" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Border x:Name="b" Width="26" Height="26" CornerRadius="13" Background="#1C1C1E">
+                                    <Path Data="M7 13h12" Stroke="#8E8E93" StrokeThickness="1.8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="b" Property="Background" Value="#25FFFFFF"/>
+                                        <Setter TargetName="b" Property="Background" Value="#2C2C2E"/>
+                                        <Setter TargetName="b" Property="BorderBrush" Value="#40FFFFFF"/>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <!-- Close -->
-                    <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="CloseButton_Click">
+                    <!-- Close Button -->
+                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="CloseButton_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <Border x:Name="b" Width="26" Height="26" CornerRadius="13" Background="#15FFFFFF">
-                                    <Path Data="M7 7l12 12M19 7l-12 12" Stroke="#8E8E93" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Border x:Name="b" Width="26" Height="26" CornerRadius="13" Background="#1C1C1E">
+                                    <Path Data="M7 7l12 12M19 7l-12 12" Stroke="#8E8E93" StrokeThickness="1.8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
@@ -121,324 +131,359 @@
                 </StackPanel>
             </Grid>
 
-            <!-- 1. Wizard Stepper Bar -->
-            <Grid Grid.Row="1" Margin="24,0,24,0" VerticalAlignment="Center">
-                <Border Background="#12FFFFFF" CornerRadius="15" Padding="4" HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal">
-                        <Border x:Name="StepPill1" Background="#280A84FF" CornerRadius="12" Padding="14,5" Margin="0,0,4,0">
-                            <StackPanel Orientation="Horizontal">
-                                <Ellipse x:Name="StepDot1" Width="7" Height="7" Fill="#0A84FF" Margin="0,0,7,0"/>
-                                <TextBlock x:Name="StepLabel1" Text="1. Ласкаво просимо" Foreground="#FFFFFF" FontSize="12" FontWeight="Bold"/>
-                            </StackPanel>
-                        </Border>
-                        <Border x:Name="StepPill2" Background="Transparent" CornerRadius="12" Padding="14,5" Margin="0,0,4,0">
-                            <StackPanel Orientation="Horizontal">
-                                <Ellipse x:Name="StepDot2" Width="7" Height="7" Fill="#636366" Margin="0,0,7,0"/>
-                                <TextBlock x:Name="StepLabel2" Text="2. Установка" Foreground="#8E8E93" FontSize="12" FontWeight="SemiBold"/>
-                            </StackPanel>
-                        </Border>
-                        <Border x:Name="StepPill3" Background="Transparent" CornerRadius="12" Padding="14,5">
-                            <StackPanel Orientation="Horizontal">
-                                <Ellipse x:Name="StepDot3" Width="7" Height="7" Fill="#636366" Margin="0,0,7,0"/>
-                                <TextBlock x:Name="StepLabel3" Text="3. Налаштування" Foreground="#8E8E93" FontSize="12" FontWeight="SemiBold"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </Border>
-            </Grid>
+            <!-- 1. Scrollable Settings Content (Authentic iOS Inset Grouped Table View) -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,2,8" Padding="0,0,6,0">
+                <StackPanel Margin="16,0,16,16">
 
-            <!-- 2. Wizard Pages Container -->
-            <Grid Grid.Row="2" Margin="24,10,24,24">
+                    <!-- Large Title: Налаштування -->
+                    <TextBlock Text="Налаштування" Foreground="#FFFFFF" FontSize="32" FontWeight="Bold" Margin="4,4,4,12"/>
 
-                <!-- ════════════════ PAGE 1: WELCOME ════════════════ -->
-                <Grid x:Name="WelcomePage" Visibility="Visible">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                    <!-- iOS Search Bar (Decorative) -->
+                    <Border Background="#1C1C1E" CornerRadius="10" Height="36" Margin="0,0,0,16" Padding="10,0">
+                        <Grid VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Path Data="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                                  Fill="#8E8E93" Width="13" Height="13" Stretch="Uniform" Margin="0,0,8,0"/>
+                            <TextBlock Text="Пошук" Foreground="#8E8E93" FontSize="14" Grid.Column="1" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
 
-                    <!-- Island Mockup & Title -->
-                    <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,4,0,16">
-                        <!-- Floating Island Graphic -->
-                        <Border Width="220" Height="40" CornerRadius="20" Background="#000000" BorderBrush="#25FFFFFF" BorderThickness="1"
-                                Margin="0,0,0,14" HorizontalAlignment="Center">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="20" ShadowDepth="4" Opacity="0.4" Color="#000000"/>
-                            </Border.Effect>
-                            <Grid Margin="8,0,8,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <!-- Mini art -->
-                                <Border Grid.Column="0" Width="24" Height="24" CornerRadius="12" Background="#0A84FF">
-                                    <Path Data="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
-                                          Fill="#FFFFFF" Stretch="Uniform" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <!-- Title -->
-                                <TextBlock Grid.Column="1" Text="Blinding Lights" Foreground="#FFFFFF" FontSize="11.5" FontWeight="Bold"
-                                           VerticalAlignment="Center" Margin="8,0,8,0" TextTrimming="CharacterEllipsis"/>
-                                <!-- Audio bars -->
-                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Border Width="2.5" Height="10" Background="#30D158" CornerRadius="1.25" Margin="1,0"/>
-                                    <Border Width="2.5" Height="16" Background="#30D158" CornerRadius="1.25" Margin="1,0"/>
-                                    <Border Width="2.5" Height="8" Background="#30D158" CornerRadius="1.25" Margin="1,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-
-                        <TextBlock Text="Dynamic Island для Windows" Foreground="#FFFFFF" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Преміальний досвід iOS на вашому робочому столі" Foreground="#8E8E93" FontSize="13" Margin="0,4,0,0" HorizontalAlignment="Center"/>
-                    </StackPanel>
-
-                    <!-- 3 Feature Glass Cards -->
-                    <Grid Grid.Row="1" Margin="0,0,0,14">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Card 1 -->
-                        <Border Grid.Column="0" Style="{StaticResource GlassPanelStyle}" Margin="0,0,6,0" Padding="14">
-                            <StackPanel VerticalAlignment="Center">
-                                <Border Width="38" Height="38" CornerRadius="19" Background="#20FF375F" HorizontalAlignment="Left" Margin="0,0,0,10">
-                                    <Path Data="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
-                                          Fill="#FF375F" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <TextBlock Text="Медіаплеєр" Foreground="#FFFFFF" FontSize="14" FontWeight="Bold"/>
-                                <TextBlock Text="Spotify, YouTube та браузери з анімаціями та спектром звуку." Foreground="#8E8E93" FontSize="11.5" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Card 2 -->
-                        <Border Grid.Column="1" Style="{StaticResource GlassPanelStyle}" Margin="4,0,4,0" Padding="14">
-                            <StackPanel VerticalAlignment="Center">
-                                <Border Width="38" Height="38" CornerRadius="19" Background="#202AABEE" HorizontalAlignment="Left" Margin="0,0,0,10">
-                                    <Path Data="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2a15.05 15.05 0 0 1-6.59-6.59l2.2-2.21c.28-.27.36-.66.25-1.01A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"
-                                          Fill="#2AABEE" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <TextBlock Text="Дзвінки Telegram" Foreground="#FFFFFF" FontSize="14" FontWeight="Bold"/>
-                                <TextBlock Text="Швидка відповідь, скидання та керування мікрофоном." Foreground="#8E8E93" FontSize="11.5" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Card 3 -->
-                        <Border Grid.Column="2" Style="{StaticResource GlassPanelStyle}" Margin="6,0,0,0" Padding="14">
-                            <StackPanel VerticalAlignment="Center">
-                                <Border Width="38" Height="38" CornerRadius="19" Background="#2030D158" HorizontalAlignment="Left" Margin="0,0,0,10">
-                                    <Path Data="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"
-                                          Fill="#30D158" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <TextBlock Text="Сповіщення" Foreground="#FFFFFF" FontSize="14" FontWeight="Bold"/>
-                                <TextBlock Text="Стильні прев'ю повідомлень Windows без настирливих тостів." Foreground="#8E8E93" FontSize="11.5" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-
-                    <!-- Bottom Action Button -->
-                    <Button Grid.Row="2" Style="{StaticResource CupertinoPrimaryButton}" Content="Почати встановлення →" Click="StartInstall_Click"/>
-                </Grid>
-
-                <!-- ════════════════ PAGE 2: INSTALLATION ════════════════ -->
-                <Grid x:Name="InstallPage" Visibility="Collapsed">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,10,0,20">
-                        <TextBlock Text="Встановлення Dynamic Island" Foreground="#FFFFFF" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Розгортання системних компонентів та шрифтів" Foreground="#8E8E93" FontSize="13" Margin="0,4,0,0" HorizontalAlignment="Center"/>
-                    </StackPanel>
-
-                    <!-- Main Installation Card -->
-                    <StackPanel Grid.Row="1" VerticalAlignment="Center">
-                        <!-- Progress Card -->
-                        <Border Style="{StaticResource GlassPanelStyle}" Padding="22" Margin="0,0,0,16">
-                            <StackPanel>
-                                <Grid Margin="0,0,0,10">
-                                    <TextBlock x:Name="InstallStatusText" Text="Підготовка до встановлення..." Foreground="#FFFFFF" FontSize="14" FontWeight="SemiBold"/>
-                                    <TextBlock x:Name="InstallPercentText" Text="0%" Foreground="#0A84FF" FontSize="14" FontWeight="Bold" HorizontalAlignment="Right"/>
-                                </Grid>
-
-                                <!-- Liquid Progress Bar -->
-                                <Border Height="10" Background="#20FFFFFF" CornerRadius="5">
-                                    <Border x:Name="ProgressBarFill" Width="0" HorizontalAlignment="Left" Background="#0A84FF" CornerRadius="5">
-                                        <Border.Effect>
-                                            <DropShadowEffect BlurRadius="8" ShadowDepth="0" Color="#0A84FF" Opacity="0.5"/>
-                                        </Border.Effect>
+                    <!-- Apple ID Style Profile / Product Card -->
+                    <Border Background="#1C1C1E" CornerRadius="12" Margin="0,0,0,20" Padding="14">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Avatar / Icon: Glowing Dynamic Island -->
+                            <Border Grid.Column="0" Width="48" Height="48" CornerRadius="24" Background="#121214" BorderBrush="#33FFFFFF" BorderThickness="1" Margin="0,0,14,0">
+                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Border Width="30" Height="14" CornerRadius="7" Background="#000000" BorderBrush="#30FFFFFF" BorderThickness="0.8">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Ellipse Width="3.5" Height="3.5" Fill="#30D158" Margin="0,0,2.5,0"/>
+                                            <Ellipse Width="3" Height="3" Fill="#0A84FF"/>
+                                        </StackPanel>
                                     </Border>
-                                </Border>
-
-                                <TextBlock x:Name="InstallDetailText" Text="Розпакування та перевірка файлів..." Foreground="#636366" FontSize="11.5" Margin="0,8,0,0"/>
+                                </Grid>
+                            </Border>
+                            <!-- Text Details -->
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="Dynamic Island Pro" Foreground="#FFFFFF" FontSize="17" FontWeight="Bold"/>
+                                <TextBlock Text="Apple iOS інтерфейс для Windows" Foreground="#8E8E93" FontSize="12.5" Margin="0,2,0,0"/>
+                                <TextBlock Text="v2.0 • GitHub синхронізація" Foreground="#30D158" FontSize="11" FontWeight="SemiBold" Margin="0,2,0,0"/>
                             </StackPanel>
-                        </Border>
+                            <!-- Right Chevron -->
+                            <TextBlock Grid.Column="2" Text="›" Foreground="#636366" FontSize="24" VerticalAlignment="Center" Margin="0,-4,4,0"/>
+                        </Grid>
+                    </Border>
 
-                        <!-- Options Card -->
-                        <Border Style="{StaticResource GlassPanelStyle}" Padding="18">
+                    <!-- ══════════ SECTION 1: ОНОВЛЕННЯ ТА ВСТАНОВЛЕННЯ ══════════ -->
+                    <TextBlock Text="ОНОВЛЕННЯ ТА ВСТАНОВЛЕННЯ" Foreground="#8E8E93" FontSize="12" FontWeight="SemiBold" Margin="14,0,14,6"/>
+                    <Border Background="#1C1C1E" CornerRadius="12" Margin="0,0,0,18" Padding="14,12">
+                        <StackPanel>
+                            <!-- Main Row -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="Автозапуск разом із Windows" Foreground="#FFFFFF" FontSize="14" FontWeight="Bold"/>
-                                    <TextBlock Text="Dynamic Island вмикатиметься автоматично при вході в систему" Foreground="#8E8E93" FontSize="11.5" Margin="0,2,0,0"/>
+
+                                <!-- Left Icon: Blue Squircle Cloud -->
+                                <Border Grid.Column="0" Width="30" Height="30" CornerRadius="7" Background="#0A84FF" Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <Path Data="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"
+                                          Fill="#FFFFFF" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <!-- Text -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock x:Name="InstallStatusTitle" Text="Встановлення з GitHub" Foreground="#FFFFFF" FontSize="15" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="InstallStatusSubText" Text="Версія 2.0 (36.5 МБ) • Репозиторій GitHub" Foreground="#8E8E93" FontSize="11.5" Margin="0,2,0,0"/>
                                 </StackPanel>
-                                <CheckBox x:Name="AutoStartCheckBox" Grid.Column="1" Style="{StaticResource CupertinoToggleSwitch}" IsChecked="True"/>
+
+                                <!-- Action Button -->
+                                <Button x:Name="InstallActionButton" Grid.Column="2" Style="{StaticResource CupertinoPrimaryButton}"
+                                        Height="32" Padding="14,0" FontSize="12.5" Content="Встановити →" Click="StartInstall_Click" VerticalAlignment="Center"/>
                             </Grid>
-                        </Border>
-                    </StackPanel>
 
-                    <!-- Bottom Action Button -->
-                    <Button x:Name="ContinueToSettingsBtn" Grid.Row="2" Style="{StaticResource CupertinoPrimaryButton}" Content="Перейти до налаштувань →" IsEnabled="False" Click="GoToSettings_Click"/>
-                </Grid>
+                            <!-- Progress Container (Visible during download/install) -->
+                            <StackPanel x:Name="InstallProgressGrid" Visibility="Collapsed" Margin="42,10,0,2">
+                                <Grid Margin="0,0,0,6">
+                                    <TextBlock x:Name="InstallDetailText" Text="Завантаження пакету з GitHub..." Foreground="#8E8E93" FontSize="11.5"/>
+                                    <TextBlock x:Name="InstallPercentText" Text="0%" Foreground="#0A84FF" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <!-- Liquid Blue Progress Track -->
+                                <Border Height="6" Background="#39393D" CornerRadius="3">
+                                    <Border x:Name="ProgressBarFill" Width="0" Height="6" HorizontalAlignment="Left" Background="#0A84FF" CornerRadius="3"/>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
 
-                <!-- ════════════════ PAGE 3: SETTINGS ════════════════ -->
-                <Grid x:Name="SettingsPage" Visibility="Collapsed">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <StackPanel Grid.Row="0" Margin="0,0,0,12">
-                        <TextBlock Text="Налаштування Dynamic Island" Foreground="#FFFFFF" FontSize="20" FontWeight="Bold"/>
-                        <TextBlock Text="Зміни застосовуються в реальному часі" Foreground="#8E8E93" FontSize="12.5" Margin="0,2,0,0"/>
-                    </StackPanel>
-
-                    <!-- Scrollable Settings Group -->
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,-8,12" Padding="0,0,8,0">
+                    <!-- ══════════ SECTION 2: РОЗМІЩЕННЯ НА ЕКРАНІ ══════════ -->
+                    <TextBlock Text="РОЗМІЩЕННЯ НА ЕКРАНІ" Foreground="#8E8E93" FontSize="12" FontWeight="SemiBold" Margin="14,0,14,6"/>
+                    <Border Background="#1C1C1E" CornerRadius="12" Margin="0,0,0,6">
                         <StackPanel>
+                            <!-- Row 1: Alignment (Segmented Control) -->
+                            <Grid Margin="14,10,14,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                            <!-- 1. Розміщення (Positioning) -->
-                            <Border Style="{StaticResource GlassPanelStyle}" Padding="16" Margin="0,0,0,10">
-                                <StackPanel>
-                                    <TextBlock Text="РОЗМІЩЕННЯ НА ЕКРАНІ" Foreground="#636366" FontSize="11" FontWeight="Bold" Margin="0,0,0,10"/>
-                                    
-                                    <!-- Horizontal Segmented Buttons -->
-                                    <Border Background="#12FFFFFF" CornerRadius="14" Padding="3" HorizontalAlignment="Stretch" Margin="0,0,0,14">
-                                        <UniformGrid Columns="3">
-                                            <RadioButton x:Name="AlignLeftRadio" Content="Ліворуч" Style="{StaticResource SegmentedRadioButton}" Checked="Alignment_Checked"/>
-                                            <RadioButton x:Name="AlignCenterRadio" Content="По центру" Style="{StaticResource SegmentedRadioButton}" IsChecked="True" Checked="Alignment_Checked"/>
-                                            <RadioButton x:Name="AlignRightRadio" Content="Праворуч" Style="{StaticResource SegmentedRadioButton}" Checked="Alignment_Checked"/>
-                                        </UniformGrid>
-                                    </Border>
+                                <!-- Icon: Green Squircle Screen -->
+                                <Border Grid.Column="0" Width="30" Height="30" CornerRadius="7" Background="#30D158" Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <Path Data="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h6l-2 2v1h8v-1l-2-2h6c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"
+                                          Fill="#FFFFFF" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
 
-                                    <!-- Top Offset Slider -->
-                                    <Grid Margin="0,0,0,4">
-                                        <TextBlock Text="Відступ від верху" Foreground="#FFFFFF" FontSize="13" FontWeight="SemiBold"/>
-                                        <TextBlock x:Name="TopOffsetValText" Text="8 px" Foreground="#0A84FF" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right"/>
-                                    </Grid>
-                                    <Slider x:Name="TopOffsetSlider" Style="{StaticResource CupertinoSlider}" Minimum="0" Maximum="50" Value="8" ValueChanged="TopOffsetSlider_ValueChanged"/>
+                                <TextBlock Grid.Column="1" Text="Положення" Foreground="#FFFFFF" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+
+                                <!-- iOS Segmented Control -->
+                                <Border Grid.Column="2" Background="#121214" CornerRadius="8" Padding="2">
+                                    <UniformGrid Columns="3">
+                                        <RadioButton x:Name="AlignLeftRadio" Content="Ліворуч" Style="{StaticResource SegmentedRadioButton}" Checked="Alignment_Checked"/>
+                                        <RadioButton x:Name="AlignCenterRadio" Content="По центру" Style="{StaticResource SegmentedRadioButton}" IsChecked="True" Checked="Alignment_Checked"/>
+                                        <RadioButton x:Name="AlignRightRadio" Content="Праворуч" Style="{StaticResource SegmentedRadioButton}" Checked="Alignment_Checked"/>
+                                    </UniformGrid>
+                                </Border>
+                            </Grid>
+
+                            <!-- Inset Divider -->
+                            <Border Height="0.5" Background="#2C2C2E" Margin="52,0,0,0"/>
+
+                            <!-- Row 2: Top Offset Slider -->
+                            <Grid Margin="14,10,14,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Icon: Orange Squircle Arrows -->
+                                <Border Grid.Column="0" Width="30" Height="30" CornerRadius="7" Background="#FF9F0A" Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <Path Data="M12 3l4 4h-3v10h3l-4 4-4-4h3V7H8l4-4z"
+                                          Fill="#FFFFFF" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <TextBlock Grid.Column="1" Text="Відступ від верху" Foreground="#FFFFFF" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="TopOffsetValText" Grid.Column="2" Text="8 px" Foreground="#0A84FF" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Slider Row -->
+                            <Slider x:Name="TopOffsetSlider" Style="{StaticResource CupertinoSlider}"
+                                    Minimum="0" Maximum="50" Value="8" Margin="52,0,14,12" ValueChanged="TopOffsetSlider_ValueChanged"/>
+                        </StackPanel>
+                    </Border>
+                    <!-- Explanatory footer -->
+                    <TextBlock Text="Визначає позиціонування та верхній відступ Dynamic Island на моніторі." Foreground="#636366" FontSize="11.5" Margin="14,0,14,18"/>
+
+                    <!-- ══════════ SECTION 3: МАСШТАБ ══════════ -->
+                    <TextBlock Text="МАСШТАБ ТА РОЗМІР" Foreground="#8E8E93" FontSize="12" FontWeight="SemiBold" Margin="14,0,14,6"/>
+                    <Border Background="#1C1C1E" CornerRadius="12" Margin="0,0,0,6">
+                        <StackPanel>
+                            <!-- Row 1: Scale Title & Value -->
+                            <Grid Margin="14,10,14,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Icon: Purple Squircle Zoom -->
+                                <Border Grid.Column="0" Width="30" Height="30" CornerRadius="7" Background="#BF5AF2" Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <Path Data="M15 3l2.3 2.3-3.89 3.89 1.41 1.41L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 3.89 3.89 1.41-1.41L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 3.89-3.89-1.41-1.41L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-3.89-3.89-1.41 1.41 3.89 3.89L15 21h6v-6z"
+                                          Fill="#FFFFFF" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <TextBlock Grid.Column="1" Text="Розмір інтерфейсу" Foreground="#FFFFFF" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="ScaleValText" Grid.Column="2" Text="100%" Foreground="#0A84FF" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Slider Row -->
+                            <Slider x:Name="ScaleSlider" Style="{StaticResource CupertinoSlider}"
+                                    Minimum="80" Maximum="130" Value="100" Margin="52,0,14,12" ValueChanged="ScaleSlider_ValueChanged"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Text="Масштабує всі віджети, обкладинки альбомів та шрифт SF Pro Rounded." Foreground="#636366" FontSize="11.5" Margin="14,0,14,18"/>
+
+                    <!-- ══════════ SECTION 4: ОФОРМЛЕННЯ ══════════ -->
+                    <TextBlock Text="ОФОРМЛЕННЯ" Foreground="#8E8E93" FontSize="12" FontWeight="SemiBold" Margin="14,0,14,6"/>
+                    <Border Background="#1C1C1E" CornerRadius="12" Margin="0,0,0,18">
+                        <StackPanel>
+                            <!-- Row 1: Theme -->
+                            <Grid Margin="14,10,14,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Icon: Indigo Squircle Moon -->
+                                <Border Grid.Column="0" Width="30" Height="30" CornerRadius="7" Background="#5E5CE6" Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <Path Data="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"
+                                          Fill="#FFFFFF" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <TextBlock Grid.Column="1" Text="Тема" Foreground="#FFFFFF" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+
+                                <!-- iOS Segmented Control -->
+                                <Border Grid.Column="2" Background="#121214" CornerRadius="8" Padding="2">
+                                    <UniformGrid Columns="3">
+                                        <RadioButton x:Name="ThemeDarkRadio" Content="Темна" Style="{StaticResource SegmentedRadioButton}" IsChecked="True" Checked="Theme_Checked"/>
+                                        <RadioButton x:Name="ThemeLightRadio" Content="Світла" Style="{StaticResource SegmentedRadioButton}" Checked="Theme_Checked"/>
+                                        <RadioButton x:Name="ThemeSystemRadio" Content="Авто" Style="{StaticResource SegmentedRadioButton}" Checked="Theme_Checked"/>
+                                    </UniformGrid>
+                                </Border>
+                            </Grid>
+
+                            <!-- Inset Divider -->
+                            <Border Height="0.5" Background="#2C2C2E" Margin="52,0,0,0"/>
+
+                            <!-- Row 2: Accent Colors -->
+                            <Grid Margin="14,10,14,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Icon: Pink Squircle Palette -->
+                                <Border Grid.Column="0" Width="30" Height="30" CornerRadius="7" Background="#FF375F" Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <Path Data="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.28 19.64 10.59 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-4.5 9c-.83 0-1.5-.67-1.5-1.5S6.67 9 7.5 9s1.5.67 1.5 1.5S8.33 12 7.5 12zm3-4c-.83 0-1.5-.67-1.5-1.5S9.67 5 10.5 5s1.5.67 1.5 1.5S11.33 8 10.5 8zm3 0c-.83 0-1.5-.67-1.5-1.5S12.67 5 13.5 5s1.5.67 1.5 1.5S14.33 8 13.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"
+                                          Fill="#FFFFFF" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <TextBlock Grid.Column="1" Text="Акцентний колір" Foreground="#FFFFFF" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+
+                                <!-- 5 Apple Color Dots -->
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Width="26" Height="26" Margin="0,0,8,0" Tag="#0A84FF" Click="AccentColor_Click">
+                                        <Button.Template>
+                                            <ControlTemplate>
+                                                <Ellipse Fill="#0A84FF" Stroke="#FFFFFF" StrokeThickness="2" Cursor="Hand"/>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <Button Width="26" Height="26" Margin="0,0,8,0" Tag="#30D158" Click="AccentColor_Click">
+                                        <Button.Template>
+                                            <ControlTemplate>
+                                                <Ellipse Fill="#30D158" Cursor="Hand"/>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <Button Width="26" Height="26" Margin="0,0,8,0" Tag="#BF5AF2" Click="AccentColor_Click">
+                                        <Button.Template>
+                                            <ControlTemplate>
+                                                <Ellipse Fill="#BF5AF2" Cursor="Hand"/>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <Button Width="26" Height="26" Margin="0,0,8,0" Tag="#FF9F0A" Click="AccentColor_Click">
+                                        <Button.Template>
+                                            <ControlTemplate>
+                                                <Ellipse Fill="#FF9F0A" Cursor="Hand"/>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <Button Width="26" Height="26" Tag="#FF453A" Click="AccentColor_Click">
+                                        <Button.Template>
+                                            <ControlTemplate>
+                                                <Ellipse Fill="#FF453A" Cursor="Hand"/>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
                                 </StackPanel>
-                            </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
 
-                            <!-- 2. Розмір острова (Scale) -->
-                            <Border Style="{StaticResource GlassPanelStyle}" Padding="16" Margin="0,0,0,10">
-                                <StackPanel>
-                                    <TextBlock Text="МАСШТАБ ОСТРОВА" Foreground="#636366" FontSize="11" FontWeight="Bold" Margin="0,0,0,10"/>
-                                    <Grid Margin="0,0,0,4">
-                                        <TextBlock Text="Розмір інтерфейсу" Foreground="#FFFFFF" FontSize="13" FontWeight="SemiBold"/>
-                                        <TextBlock x:Name="ScaleValText" Text="100%" Foreground="#0A84FF" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right"/>
-                                    </Grid>
-                                    <Slider x:Name="ScaleSlider" Style="{StaticResource CupertinoSlider}" Minimum="80" Maximum="130" Value="100" ValueChanged="ScaleSlider_ValueChanged"/>
-                                </StackPanel>
-                            </Border>
+                    <!-- ══════════ SECTION 5: СИСТЕМА ══════════ -->
+                    <TextBlock Text="СИСТЕМА" Foreground="#8E8E93" FontSize="12" FontWeight="SemiBold" Margin="14,0,14,6"/>
+                    <Border Background="#1C1C1E" CornerRadius="12" Margin="0,0,0,18">
+                        <StackPanel>
+                            <!-- Row 1: AutoStart (iOS UISwitch Toggle) -->
+                            <Grid Margin="14,10,14,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                            <!-- 3. Тема (Theme) -->
-                            <Border Style="{StaticResource GlassPanelStyle}" Padding="16" Margin="0,0,0,10">
-                                <StackPanel>
-                                    <TextBlock Text="ТЕМА ТА ОФОРМЛЕННЯ" Foreground="#636366" FontSize="11" FontWeight="Bold" Margin="0,0,0,10"/>
-                                    <Border Background="#12FFFFFF" CornerRadius="14" Padding="3" HorizontalAlignment="Stretch" Margin="0,0,0,14">
-                                        <UniformGrid Columns="3">
-                                            <RadioButton x:Name="ThemeDarkRadio" Content="Темна (OLED)" Style="{StaticResource SegmentedRadioButton}" IsChecked="True" Checked="Theme_Checked"/>
-                                            <RadioButton x:Name="ThemeLightRadio" Content="Світла" Style="{StaticResource SegmentedRadioButton}" Checked="Theme_Checked"/>
-                                            <RadioButton x:Name="ThemeSystemRadio" Content="Системна" Style="{StaticResource SegmentedRadioButton}" Checked="Theme_Checked"/>
-                                        </UniformGrid>
-                                    </Border>
+                                <!-- Icon: Green Squircle Power -->
+                                <Border Grid.Column="0" Width="30" Height="30" CornerRadius="7" Background="#32D74B" Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <Path Data="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"
+                                          Fill="#FFFFFF" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
 
-                                    <!-- Accent Color Selection -->
-                                    <TextBlock Text="Акцентний колір" Foreground="#FFFFFF" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,8"/>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button Width="28" Height="28" Margin="0,0,10,0" Tag="#0A84FF" Click="AccentColor_Click">
-                                            <Button.Template>
-                                                <ControlTemplate>
-                                                    <Ellipse Fill="#0A84FF" Stroke="#FFFFFF" StrokeThickness="2" Cursor="Hand"/>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-                                        <Button Width="28" Height="28" Margin="0,0,10,0" Tag="#30D158" Click="AccentColor_Click">
-                                            <Button.Template>
-                                                <ControlTemplate>
-                                                    <Ellipse Fill="#30D158" Cursor="Hand"/>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-                                        <Button Width="28" Height="28" Margin="0,0,10,0" Tag="#BF5AF2" Click="AccentColor_Click">
-                                            <Button.Template>
-                                                <ControlTemplate>
-                                                    <Ellipse Fill="#BF5AF2" Cursor="Hand"/>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-                                        <Button Width="28" Height="28" Margin="0,0,10,0" Tag="#FF9F0A" Click="AccentColor_Click">
-                                            <Button.Template>
-                                                <ControlTemplate>
-                                                    <Ellipse Fill="#FF9F0A" Cursor="Hand"/>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-                                        <Button Width="28" Height="28" Tag="#FF453A" Click="AccentColor_Click">
-                                            <Button.Template>
-                                                <ControlTemplate>
-                                                    <Ellipse Fill="#FF453A" Cursor="Hand"/>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
+                                <TextBlock Grid.Column="1" Text="Автозапуск при старті Windows" Foreground="#FFFFFF" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
 
-                            <!-- 4. Автозапуск -->
-                            <Border Style="{StaticResource GlassPanelStyle}" Padding="16">
-                                <Grid>
+                                <!-- iOS Switch -->
+                                <CheckBox x:Name="SettingsAutoStartCheck" Grid.Column="2" Style="{StaticResource CupertinoToggleSwitch}"
+                                          Checked="AutoStart_Changed" Unchecked="AutoStart_Changed" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Inset Divider -->
+                            <Border Height="0.5" Background="#2C2C2E" Margin="52,0,0,0"/>
+
+                            <!-- Row 2: Restart Island (Clickable Row) -->
+                            <Border Background="Transparent" Cursor="Hand" MouseLeftButtonDown="RestartRow_Click">
+                                <Grid Margin="14,10,14,10">
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="Автозапуск при старті Windows" Foreground="#FFFFFF" FontSize="13" FontWeight="Bold"/>
-                                        <TextBlock Text="Запускати острівець разом із операційною системою" Foreground="#8E8E93" FontSize="11" Margin="0,2,0,0"/>
-                                    </StackPanel>
-                                    <CheckBox x:Name="SettingsAutoStartCheck" Grid.Column="1" Style="{StaticResource CupertinoToggleSwitch}"
-                                              Checked="AutoStart_Changed" Unchecked="AutoStart_Changed"/>
+
+                                    <!-- Icon: Red Squircle Restart -->
+                                    <Border Grid.Column="0" Width="30" Height="30" CornerRadius="7" Background="#FF453A" Margin="0,0,12,0" VerticalAlignment="Center">
+                                        <Path Data="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"
+                                              Fill="#FFFFFF" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <TextBlock Grid.Column="1" Text="Перезапустити Dynamic Island" Foreground="#FFFFFF" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="›" Foreground="#636366" FontSize="22" VerticalAlignment="Center" Margin="0,-2,2,0"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Inset Divider -->
+                            <Border Height="0.5" Background="#2C2C2E" Margin="52,0,0,0"/>
+
+                            <!-- Row 3: Open AppData Folder (Clickable Row) -->
+                            <Border Background="Transparent" Cursor="Hand" MouseLeftButtonDown="OpenFolderRow_Click">
+                                <Grid Margin="14,10,14,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Icon: Gray Squircle Folder -->
+                                    <Border Grid.Column="0" Width="30" Height="30" CornerRadius="7" Background="#8E8E93" Margin="0,0,12,0" VerticalAlignment="Center">
+                                        <Path Data="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+                                              Fill="#FFFFFF" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <TextBlock Grid.Column="1" Text="Папка програми (%AppData%)" Foreground="#FFFFFF" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="›" Foreground="#636366" FontSize="22" VerticalAlignment="Center" Margin="0,-2,2,0"/>
                                 </Grid>
                             </Border>
                         </StackPanel>
-                    </ScrollViewer>
+                    </Border>
 
-                    <!-- Bottom Buttons Bar -->
-                    <Grid Grid.Row="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="12"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                    <!-- Footer Info -->
+                    <StackPanel Margin="0,6,0,24" HorizontalAlignment="Center">
+                        <TextBlock Text="Dynamic Island для Windows • iOS 26" Foreground="#636366" FontSize="12" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Всі налаштування застосовуються в реальному часі" Foreground="#48484A" FontSize="11" Margin="0,3,0,0" HorizontalAlignment="Center"/>
+                    </StackPanel>
 
-                        <!-- Open Folder -->
-                        <Button Grid.Column="0" Style="{StaticResource CupertinoSecondaryButton}" Content="📁 Відкрити теку" Click="OpenFolder_Click"/>
-
-                        <!-- Launch / Restart Dynamic Island -->
-                        <Button Grid.Column="2" Style="{StaticResource CupertinoPrimaryButton}" Content="🚀 Запустити Dynamic Island" Click="RestartIsland_Click"/>
-                    </Grid>
-                </Grid>
-
-            </Grid>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
     </Border>
 </Window>

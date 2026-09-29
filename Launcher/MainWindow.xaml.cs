@@ -47,7 +47,15 @@ namespace DynamicIslandLauncher
                 string targetExe = Path.Combine(SettingsService.InstallDirectory, "DynamicIsland.exe");
                 if (File.Exists(targetExe))
                 {
-                    StepLabel2.Text = "2. Оновлення";
+                    InstallStatusTitle.Text = "Dynamic Island встановлено";
+                    InstallStatusSubText.Text = "Остання версія з GitHub • Активна";
+                    InstallActionButton.Content = "Оновити";
+                }
+                else
+                {
+                    InstallStatusTitle.Text = "Встановлення з GitHub";
+                    InstallStatusSubText.Text = "Версія 2.0 (36.5 МБ) • Репозиторій nout0688-cloud";
+                    InstallActionButton.Content = "Встановити →";
                 }
                 File.AppendAllText("launcher.log", $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] MainWindow_Loaded end\n");
             }
@@ -88,50 +96,7 @@ namespace DynamicIslandLauncher
 
             // Auto-start
             bool auto = SettingsService.GetAutoStart();
-            AutoStartCheckBox.IsChecked = auto;
             SettingsAutoStartCheck.IsChecked = auto;
-        }
-
-        private void SwitchToStep(int step)
-        {
-            // Update Stepper Pills
-            StepPill1.Background = step == 1 ? new SolidColorBrush(Color.FromArgb(40, 10, 132, 255)) : Brushes.Transparent;
-            StepDot1.Fill = step == 1 ? (SolidColorBrush)FindResource("IOSBlue") : (SolidColorBrush)FindResource("IOSTextTertiary");
-            StepLabel1.Foreground = step == 1 ? Brushes.White : (SolidColorBrush)FindResource("IOSTextSecondary");
-            StepLabel1.FontWeight = step == 1 ? FontWeights.Bold : FontWeights.SemiBold;
-
-            StepPill2.Background = step == 2 ? new SolidColorBrush(Color.FromArgb(40, 10, 132, 255)) : Brushes.Transparent;
-            StepDot2.Fill = step == 2 ? (SolidColorBrush)FindResource("IOSBlue") : (SolidColorBrush)FindResource("IOSTextTertiary");
-            StepLabel2.Foreground = step == 2 ? Brushes.White : (SolidColorBrush)FindResource("IOSTextSecondary");
-            StepLabel2.FontWeight = step == 2 ? FontWeights.Bold : FontWeights.SemiBold;
-
-            StepPill3.Background = step == 3 ? new SolidColorBrush(Color.FromArgb(40, 10, 132, 255)) : Brushes.Transparent;
-            StepDot3.Fill = step == 3 ? (SolidColorBrush)FindResource("IOSBlue") : (SolidColorBrush)FindResource("IOSTextTertiary");
-            StepLabel3.Foreground = step == 3 ? Brushes.White : (SolidColorBrush)FindResource("IOSTextSecondary");
-            StepLabel3.FontWeight = step == 3 ? FontWeights.Bold : FontWeights.SemiBold;
-
-            // Animate Page Transitions
-            AnimatePage(WelcomePage, step == 1);
-            AnimatePage(InstallPage, step == 2);
-            AnimatePage(SettingsPage, step == 3);
-        }
-
-        private void AnimatePage(Grid page, bool show)
-        {
-            if (show)
-            {
-                page.Visibility = Visibility.Visible;
-                var anim = new DoubleAnimation(0.0, 1.0, TimeSpan.FromMilliseconds(250))
-                {
-                    EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
-                };
-                page.BeginAnimation(OpacityProperty, anim);
-            }
-            else
-            {
-                page.Visibility = Visibility.Collapsed;
-                page.Opacity = 0.0;
-            }
         }
 
         private async void StartInstall_Click(object sender, RoutedEventArgs e)
@@ -139,9 +104,10 @@ namespace DynamicIslandLauncher
             if (_isInstalling) return;
             _isInstalling = true;
 
-            SwitchToStep(2);
+            InstallProgressGrid.Visibility = Visibility.Visible;
+            InstallActionButton.IsEnabled = false;
 
-            // Execute installation asynchronously with smooth progress bar
+            // Execute installation asynchronously
             await PerformInstallationAsync();
 
             _isInstalling = false;
@@ -190,7 +156,7 @@ namespace DynamicIslandLauncher
                             double pct = 10.0 + ((double)totalRead / totalBytes) * 65.0; // 10% to 75%
                             double mbRead = totalRead / (1024.0 * 1024.0);
                             double mbTotal = totalBytes / (1024.0 * 1024.0);
-                            await SetProgress(Math.Min(75, pct), "Завантаження компонентів з GitHub...", $"{mbRead:F1} МБ з {mbTotal:F1} МБ ({pct:F0}%)");
+                            await SetProgress(Math.Min(75, pct), "Завантаження з GitHub...", $"{mbRead:F1} МБ з {mbTotal:F1} МБ ({pct:F0}%)");
                         }
                     }
 
@@ -239,13 +205,13 @@ namespace DynamicIslandLauncher
             }
             else
             {
-                await SetProgress(80, "Копіювання локальних компонентів...", "DynamicIsland.exe та бібліотеки");
+                await SetProgress(80, "Копіювання компонентів...", "DynamicIsland.exe та бібліотеки");
                 await Task.Run(() => CopyLocalFiles(destDir));
             }
 
             // Step 4: Configure Auto-start & settings
-            await SetProgress(95, "Налаштування конфігурації...", "Параметри та автозапуск");
-            bool enableAuto = AutoStartCheckBox.IsChecked == true;
+            await SetProgress(95, "Завершення налаштування...", "Параметри та реєстр Windows");
+            bool enableAuto = SettingsAutoStartCheck.IsChecked == true;
             SettingsService.SetAutoStart(enableAuto, Path.Combine(destDir, "DynamicIsland.exe"));
 
             var currentSettings = _settingsService.Current;
@@ -254,9 +220,13 @@ namespace DynamicIslandLauncher
             await Task.Delay(300);
 
             // Complete!
-            await SetProgress(100, "Успішно встановлено з GitHub!", "Dynamic Island готовий до використання");
-            InstallStatusText.Foreground = (SolidColorBrush)FindResource("IOSGreen");
-            ContinueToSettingsBtn.IsEnabled = true;
+            await SetProgress(100, "Успішно встановлено!", "Dynamic Island готовий до використання");
+            InstallStatusTitle.Text = "Dynamic Island встановлено";
+            InstallStatusSubText.Text = "Остання версія з GitHub • Активна на екрані";
+            InstallActionButton.Content = "Запущено ✓";
+            InstallActionButton.IsEnabled = true;
+            await Task.Delay(1200);
+            InstallProgressGrid.Visibility = Visibility.Collapsed;
 
             // Start island immediately
             StartOrRestartIsland();
@@ -292,24 +262,19 @@ namespace DynamicIslandLauncher
 
         private async Task SetProgress(double pct, string status, string detail)
         {
-            InstallStatusText.Text = status;
+            InstallStatusTitle.Text = status;
             InstallDetailText.Text = detail;
             InstallPercentText.Text = $"{(int)pct}%";
 
-            double maxBarWidth = 480;
+            double maxBarWidth = 430;
             double targetWidth = (pct / 100.0) * maxBarWidth;
 
-            var anim = new DoubleAnimation(ProgressBarFill.ActualWidth, targetWidth, TimeSpan.FromMilliseconds(250))
+            var anim = new DoubleAnimation(ProgressBarFill.ActualWidth, targetWidth, TimeSpan.FromMilliseconds(200))
             {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
             };
             ProgressBarFill.BeginAnimation(WidthProperty, anim);
             await Task.Yield();
-        }
-
-        private void GoToSettings_Click(object sender, RoutedEventArgs e)
-        {
-            SwitchToStep(3);
         }
 
         // ════════════════ SETTINGS HANDLERS ════════════════
@@ -381,9 +346,14 @@ namespace DynamicIslandLauncher
             SettingsService.SetAutoStart(enable, exePath);
         }
 
-        private void RestartIsland_Click(object sender, RoutedEventArgs e)
+        private void RestartRow_Click(object sender, MouseButtonEventArgs e)
         {
             StartOrRestartIsland();
+        }
+
+        private void OpenFolderRow_Click(object sender, MouseButtonEventArgs e)
+        {
+            OpenFolder();
         }
 
         private void StartOrRestartIsland()
@@ -425,7 +395,7 @@ namespace DynamicIslandLauncher
             }
         }
 
-        private void OpenFolder_Click(object sender, RoutedEventArgs e)
+        private void OpenFolder()
         {
             try
             {
